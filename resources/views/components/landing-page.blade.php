@@ -30,13 +30,13 @@
 
                 <div class="hidden md:flex space-x-8 items-center">
 
-                    <a href="{{ url('/') }}"
-                        class="{{ request()->is('/') ? 'text-biper-pink font-bold' : 'text-gray-500 font-medium' }} hover:text-biper-pink transition">
+                    <a href="{{ route('pageHome') }}"
+                        class="{{ request()->routeIs('pageHome') ? 'text-biper-pink font-bold' : 'text-gray-500 font-medium' }} hover:text-biper-pink transition">
                         Beranda
                     </a>
 
-                    <a href="{{ url('/#layanan') }}"
-                        class="font-medium text-gray-500 hover:text-biper-pink transition">
+                    <a href="{{ route('pageLayanan') }}"
+                        class="{{ request()->routeIs('pageLayanan') ? 'text-biper-pink font-bold' : 'text-gray-500 font-medium' }} hover:text-biper-pink transition">
                         Layanan
                     </a>
 
