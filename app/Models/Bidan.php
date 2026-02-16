@@ -18,12 +18,12 @@ class Bidan extends Model
         self::TYPE_FREELANCE => 'Freelance',
     ];
 
+    protected $with = ['user'];
+
     protected $fillable = [
         'user_id',
-        'name',
         'credential',
         'specialization',
-        'phone',
         'str_number',
         'experience_years',
         'employment_type',
@@ -54,9 +54,11 @@ class Bidan extends Model
 
     public function getFullNameAttribute(): string
     {
+        $name = $this->user->name ?? '';
+
         return $this->credential
-            ? "{$this->name}, {$this->credential}"
-            : $this->name;
+            ? "{$name}, {$this->credential}"
+            : $name;
     }
 
     public function getPhotoUrlAttribute(): ?string

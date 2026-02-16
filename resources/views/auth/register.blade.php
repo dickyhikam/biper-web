@@ -7,7 +7,7 @@
         <div class="absolute top-0 right-0 w-96 h-96 bg-biper-blue/10 rounded-full blur-3xl animate-pulse"></div>
         <div class="absolute bottom-0 left-0 w-96 h-96 bg-biper-pink/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 1s;"></div>
 
-        <div class="w-full max-w-md relative z-10" x-data="{
+        <div class="w-full max-w-lg relative z-10" x-data="{
             showPassword: false,
             showPasswordConfirm: false,
             termsAccepted: false
@@ -23,21 +23,48 @@
                 <h1 class="font-display font-bold text-3xl text-center text-gray-800 mb-2">Buat Akun Baru</h1>
                 <p class="text-center text-gray-500 mb-8">Daftar untuk nikmati kemudahan booking</p>
 
-                <form action="#" method="POST" class="space-y-5">
+                {{-- Error Summary --}}
+                @if ($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-start gap-3">
+                        <i class="fas fa-exclamation-circle text-lg mt-0.5"></i>
+                        <div>
+                            @foreach ($errors->all() as $error)
+                                <p>{{ $error }}</p>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
 
-                    {{-- Name --}}
+                <form action="{{ route('register') }}" method="POST" class="space-y-5">
+                    @csrf
+
+                    {{-- Nickname + Name --}}
                     <div>
-                        <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">
-                            <i class="fas fa-user text-biper-pink mr-2"></i>Nama Lengkap
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            <i class="fas fa-user text-biper-pink mr-2"></i>Panggilan & Nama Lengkap
                         </label>
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
-                            placeholder="Contoh: Sarah Amanda"
-                            required
-                        >
+                        <div class="flex gap-3">
+                            <select
+                                name="nickname"
+                                class="w-28 shrink-0 px-3 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition bg-white text-gray-700 font-medium"
+                            >
+                                @foreach (\App\Models\User::NICKNAMES as $nick)
+                                    <option value="{{ $nick }}" {{ old('nickname', 'Bunda') === $nick ? 'selected' : '' }}>{{ $nick }}</option>
+                                @endforeach
+                            </select>
+                            <input
+                                type="text"
+                                id="name"
+                                name="name"
+                                value="{{ old('name') }}"
+                                class="flex-1 px-4 py-3 border-2 {{ $errors->has('name') ? 'border-red-400' : 'border-gray-200' }} rounded-xl focus:border-biper-pink focus:outline-none transition"
+                                placeholder="Contoh: Sarah Amanda"
+                                required
+                            >
+                        </div>
+                        @error('name')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Email --}}
@@ -49,10 +76,14 @@
                             type="email"
                             id="email"
                             name="email"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
+                            value="{{ old('email') }}"
+                            class="w-full px-4 py-3 border-2 {{ $errors->has('email') ? 'border-red-400' : 'border-gray-200' }} rounded-xl focus:border-biper-pink focus:outline-none transition"
                             placeholder="bunda@email.com"
                             required
                         >
+                        @error('email')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Phone/WhatsApp --}}
@@ -64,11 +95,15 @@
                             type="tel"
                             id="phone"
                             name="phone"
-                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
+                            value="{{ old('phone') }}"
+                            class="w-full px-4 py-3 border-2 {{ $errors->has('phone') ? 'border-red-400' : 'border-gray-200' }} rounded-xl focus:border-biper-pink focus:outline-none transition"
                             placeholder="081234567890"
                             required
                         >
                         <p class="text-xs text-gray-500 mt-1">Untuk konfirmasi booking via WhatsApp</p>
+                        @error('phone')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Password --}}
@@ -81,7 +116,7 @@
                                 :type="showPassword ? 'text' : 'password'"
                                 id="password"
                                 name="password"
-                                class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition pr-12"
+                                class="w-full px-4 py-3 border-2 {{ $errors->has('password') ? 'border-red-400' : 'border-gray-200' }} rounded-xl focus:border-biper-pink focus:outline-none transition pr-12"
                                 placeholder="Minimal 8 karakter"
                                 required
                             >
@@ -93,6 +128,9 @@
                                 <i :class="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                             </button>
                         </div>
+                        @error('password')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Confirm Password --}}
@@ -154,7 +192,7 @@
                 <div class="mt-8 pt-6 border-t border-gray-100 text-center">
                     <p class="text-sm text-gray-600">
                         Sudah punya akun?
-                        <a href="/login" class="text-biper-pink hover:text-biper-pink-dark font-semibold underline">
+                        <a href="{{ route('login') }}" class="text-biper-pink hover:text-biper-pink-dark font-semibold underline">
                             Masuk di sini
                         </a>
                     </p>

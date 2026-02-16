@@ -33,7 +33,12 @@ class LoginController extends Controller
         if (Auth::attempt($authCredentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Frontend user redirect ke home
+            $user = Auth::user();
+
+            if ($user->needsEmailVerification()) {
+                return redirect()->route('verification.notice');
+            }
+
             return redirect()->intended(route('pageHome'));
         }
 

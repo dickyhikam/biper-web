@@ -14,9 +14,7 @@ class BidanController extends Controller
 {
     public function index()
     {
-        $bidans = Bidan::with('user')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $bidans = Bidan::orderBy('created_at', 'desc')->get();
 
         return view('admin.bidans.index', compact('bidans'));
     }
@@ -58,7 +56,7 @@ class BidanController extends Controller
             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email'];
             $rules['password'] = ['required', 'string', 'min:8'];
         } else {
-            $rules['user_id'] = ['nullable', 'exists:users,id', 'unique:bidans,user_id'];
+            $rules['user_id'] = ['required', 'exists:users,id', 'unique:bidans,user_id'];
         }
 
         $validated = $request->validate($rules);
@@ -68,12 +66,22 @@ class BidanController extends Controller
                 $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
+                    'phone' => $validated['phone'] ?? null,
                     'password' => Hash::make($validated['password']),
                     'role' => User::ROLE_BIDAN_TERAPIS,
                 ]);
                 $validated['user_id'] = $user->id;
                 unset($validated['email'], $validated['password']);
+            } else {
+                $user = User::findOrFail($validated['user_id']);
+                $user->update([
+                    'name' => $validated['name'],
+                    'phone' => $validated['phone'] ?? $user->phone,
+                ]);
             }
+
+            // Remove name & phone from bidan data (stored on user)
+            unset($validated['name'], $validated['phone']);
 
             if ($request->hasFile('photo')) {
                 $validated['photo'] = $request->file('photo')->store('bidans', 'public');
@@ -97,8 +105,6 @@ class BidanController extends Controller
 
     public function show(Bidan $bidan)
     {
-        $bidan->load('user');
-
         return view('admin.bidans.show', compact('bidan'));
     }
 
@@ -142,7 +148,7 @@ class BidanController extends Controller
             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email'];
             $rules['password'] = ['required', 'string', 'min:8'];
         } else {
-            $rules['user_id'] = ['nullable', 'exists:users,id', "unique:bidans,user_id,{$bidan->id}"];
+            $rules['user_id'] = ['required', 'exists:users,id', "unique:bidans,user_id,{$bidan->id}"];
         }
 
         $validated = $request->validate($rules);
@@ -152,12 +158,22 @@ class BidanController extends Controller
                 $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
+                    'phone' => $validated['phone'] ?? null,
                     'password' => Hash::make($validated['password']),
                     'role' => User::ROLE_BIDAN_TERAPIS,
                 ]);
                 $validated['user_id'] = $user->id;
                 unset($validated['email'], $validated['password']);
+            } else {
+                $user = User::findOrFail($validated['user_id']);
+                $user->update([
+                    'name' => $validated['name'],
+                    'phone' => $validated['phone'] ?? $user->phone,
+                ]);
             }
+
+            // Remove name & phone from bidan data (stored on user)
+            unset($validated['name'], $validated['phone']);
 
             if ($request->hasFile('photo')) {
                 if ($bidan->photo) {

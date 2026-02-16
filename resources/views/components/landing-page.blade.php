@@ -181,6 +181,8 @@
     <a href="https://wa.me/628123456789" class="fixed bottom-8 right-8 w-16 h-16 bg-[#25d366] text-white rounded-full shadow-lg shadow-green-500/30 flex items-center justify-center text-3xl hover:scale-110 transition-transform z-50">
         <i class="fab fa-whatsapp"></i>
     </a>
+
+    @stack('scripts')
 </body>
 
 </html>

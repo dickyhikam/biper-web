@@ -34,10 +34,10 @@
 
             <div class="flex items-start gap-5">
                 @if ($bidan->photo_url)
-                    <img src="{{ $bidan->photo_url }}" alt="{{ $bidan->name }}" class="biper-detail-hero__avatar">
+                    <img src="{{ $bidan->photo_url }}" alt="{{ $bidan->user->name }}" class="biper-detail-hero__avatar">
                 @else
                     <div class="biper-detail-hero__initials">
-                        {{ strtoupper(substr($bidan->name, 0, 2)) }}
+                        {{ strtoupper(substr($bidan->user->name, 0, 2)) }}
                     </div>
                 @endif
                 <div class="min-w-0">
@@ -82,8 +82,8 @@
                 </div>
                 <div>
                     <div class="biper-detail-stat__label">No HP</div>
-                    <div class="biper-detail-stat__value {{ !$bidan->phone ? 'biper-detail-stat__value--muted' : '' }}">
-                        {{ $bidan->phone ?? 'Belum diisi' }}
+                    <div class="biper-detail-stat__value {{ !$bidan->user->phone ? 'biper-detail-stat__value--muted' : '' }}">
+                        {{ $bidan->user->phone ?? 'Belum diisi' }}
                     </div>
                 </div>
             </div>

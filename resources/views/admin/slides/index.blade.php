@@ -120,8 +120,20 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ auth('admin')->user()->canManageSlides() ? 7 : 6 }}" class="text-center py-8 text-neutral-500">
-                                    Belum ada data slide / banner.
+                                <td colspan="{{ auth('admin')->user()->canManageSlides() ? 7 : 6 }}">
+                                    <div class="flex flex-col items-center justify-center py-16 px-4">
+                                        <div class="w-24 h-24 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-600/15 dark:to-primary-600/5 flex items-center justify-center mb-5">
+                                            <iconify-icon icon="solar:gallery-minimalistic-bold-duotone" style="font-size: 48px;" class="text-primary-400 dark:text-primary-500"></iconify-icon>
+                                        </div>
+                                        <h6 class="text-lg font-bold text-neutral-600 dark:text-neutral-300 mb-1">Belum ada data slide / banner</h6>
+                                        <p class="text-sm text-neutral-400 dark:text-neutral-500 mb-5 text-center">Mulai tambahkan slide untuk tampilan homepage.</p>
+                                        @if (auth('admin')->user()->canManageSlides())
+                                            <a href="{{ route('admin.slides.create') }}" class="inline-flex items-center gap-2 border border-primary-300 dark:border-primary-600 text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-600/10 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all">
+                                                <iconify-icon icon="solar:add-circle-bold" class="text-lg"></iconify-icon>
+                                                Tambah Slide Pertama
+                                            </a>
+                                        @endif
+                                    </div>
                                 </td>
                             </tr>
                         @endforelse

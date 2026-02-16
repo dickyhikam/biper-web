@@ -169,7 +169,7 @@ $isEdit = isset($bidan);
                         </label>
                         <div class="icon-field">
                             <span class="icon"><iconify-icon icon="f7:person"></iconify-icon></span>
-                            <input type="text" name="name" value="{{ old('name', $isEdit ? $bidan->name : '') }}"
+                            <input type="text" name="name" value="{{ old('name', $isEdit ? $bidan->user->name : '') }}"
                                 class="form-control @error('name') border-danger-500 @enderror"
                                 placeholder="Masukkan nama lengkap">
                         </div>
@@ -323,7 +323,7 @@ $isEdit = isset($bidan);
                         <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">No HP</label>
                         <div class="icon-field">
                             <span class="icon"><iconify-icon icon="solar:phone-calling-linear"></iconify-icon></span>
-                            <input type="text" name="phone" value="{{ old('phone', $isEdit ? $bidan->phone : '') }}"
+                            <input type="text" name="phone" value="{{ old('phone', $isEdit ? $bidan->user->phone : '') }}"
                                 class="form-control @error('phone') border-danger-500 @enderror"
                                 placeholder="cth: 081234567890">
                         </div>

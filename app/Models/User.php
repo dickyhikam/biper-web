@@ -15,19 +15,29 @@ class User extends Authenticatable
     const ROLE_ADMIN = 'admin';
     const ROLE_OWNER = 'owner';
     const ROLE_BIDAN_TERAPIS = 'bidan_terapis';
+    const ROLE_PELANGGAN = 'pelanggan';
 
     const ROLES = [
         self::ROLE_SUPER_ADMIN => 'Super Admin',
         self::ROLE_ADMIN => 'Admin',
         self::ROLE_OWNER => 'Owner',
         self::ROLE_BIDAN_TERAPIS => 'Bidan / Terapis',
+        self::ROLE_PELANGGAN => 'Pelanggan',
     ];
+
+    const NICKNAMES = ['Bunda', 'Ibu', 'Mom', 'Mama'];
 
     protected $fillable = [
         'name',
+        'nickname',
         'email',
+        'phone',
         'password',
         'role',
+        'email_verification_code',
+        'email_verification_code_expires_at',
+        'email_verification_code_sent_at',
+        'email_verification_attempts',
     ];
 
     protected $hidden = [
@@ -39,6 +49,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'email_verification_code_expires_at' => 'datetime',
+            'email_verification_code_sent_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -61,6 +73,11 @@ class User extends Authenticatable
     public function isBidanTerapis(): bool
     {
         return $this->role === self::ROLE_BIDAN_TERAPIS;
+    }
+
+    public function isPelanggan(): bool
+    {
+        return $this->role === self::ROLE_PELANGGAN;
     }
 
     public function hasRole(string|array $roles): bool
@@ -108,6 +125,68 @@ class User extends Authenticatable
     public function canViewSlides(): bool
     {
         return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN, self::ROLE_OWNER]);
+    }
+
+    public function generateVerificationCode(): string
+    {
+        $chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        $code = '';
+        for ($i = 0; $i < 6; $i++) {
+            $code .= $chars[random_int(0, strlen($chars) - 1)];
+        }
+
+        $this->update([
+            'email_verification_code' => $code,
+            'email_verification_code_expires_at' => now()->addMinutes(15),
+            'email_verification_code_sent_at' => now(),
+        ]);
+
+        return $code;
+    }
+
+    public function verifyEmailWithCode(string $code): bool
+    {
+        if ($this->email_verification_code !== strtoupper(trim($code))) {
+            return false;
+        }
+
+        if ($this->email_verification_code_expires_at->lt(now())) {
+            return false;
+        }
+
+        $this->update([
+            'email_verified_at' => now(),
+            'email_verification_code' => null,
+            'email_verification_code_expires_at' => null,
+            'email_verification_attempts' => 0,
+        ]);
+
+        return true;
+    }
+
+    public function canResendVerificationCode(): bool
+    {
+        if ($this->email_verification_code_sent_at &&
+            $this->email_verification_code_sent_at->gt(now()->subMinute())) {
+            return false;
+        }
+
+        if ($this->email_verification_code_sent_at &&
+            $this->email_verification_code_sent_at->lt(now()->subHour())) {
+            $this->update(['email_verification_attempts' => 0]);
+        }
+
+        return $this->email_verification_attempts < 3;
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return !is_null($this->email_verified_at);
+    }
+
+    public function needsEmailVerification(): bool
+    {
+        return $this->isPelanggan() && !$this->hasVerifiedEmail();
     }
 
     public function getRoleLabelAttribute(): string
