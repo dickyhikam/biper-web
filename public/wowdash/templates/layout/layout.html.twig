@@ -1,0 +1,46 @@
+<!-- meta tags and other links -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+{% include 'partials/head.html.twig' %}
+
+
+<body class="dark:bg-neutral-800 bg-neutral-100 dark:text-white">
+
+    <!-- ..::  header area start ::.. -->
+    {% include 'partials/sidebar.html.twig' %}
+    <!-- ..::  header area end ::.. -->
+
+    <main class="dashboard-main">
+
+        <!-- ..::  navbar start ::.. -->
+        {% include 'partials/navbar.html.twig' %}
+        <!-- ..::  navbar end ::.. -->
+        <div class="dashboard-main-body">
+            
+            <!-- ..::  breadcrumb  start ::.. -->
+            {% include 'partials/breadcrumb.html.twig' %}
+            <!-- ..::  header area end ::.. -->
+
+{% block content %}
+
+{% endblock content %} 
+        
+        </div>
+        <!-- ..::  footer  start ::.. -->
+        {% include 'partials/footer.html.twig' %}
+        <!-- ..::  footer area end ::.. -->
+
+    </main>
+
+    <!-- ..::  scripts  start ::.. -->
+    {% include 'partials/script.html.twig' %}
+
+    {% block custom_script %}
+
+    {% endblock custom_script %}
+    <!-- ..::  scripts  end ::.. -->
+
+</body>
+
+</html>

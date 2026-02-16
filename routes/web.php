@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\TentangController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Admin\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('pageHome');
@@ -27,3 +28,8 @@ Route::get('/forgot-password', function () {
 Route::get('/reset-password', function () {
     return view('auth.reset-password');
 })->name('password.reset');
+
+// Admin Routes
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+});
