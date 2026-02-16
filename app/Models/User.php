@@ -35,6 +35,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'email_verified_at',
         'email_verification_code',
         'email_verification_code_expires_at',
         'email_verification_code_sent_at',

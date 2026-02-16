@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BidanController;
+use App\Http\Controllers\Admin\PelangganController;
 use App\Http\Controllers\Admin\SlideController;
 use Illuminate\Support\Facades\Route;
 
@@ -88,6 +89,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
+
+    // Pelanggan - view
+    Route::get('/pelanggan', [PelangganController::class, 'index'])
+        ->name('pelanggan.index')
+        ->middleware('role:super_admin,admin,owner');
 
     // Bidan/Terapis management - create, edit, delete (harus sebelum show route)
     Route::middleware('role:super_admin,owner')->group(function () {

@@ -12,14 +12,21 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::orderBy('created_at', 'desc')->get();
+        $users = User::where('role', '!=', User::ROLE_PELANGGAN)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('admin.users.index', compact('users'));
     }
 
+    private function adminRoles(): array
+    {
+        return collect(User::ROLES)->except(User::ROLE_PELANGGAN)->all();
+    }
+
     public function create()
     {
-        $roles = User::ROLES;
+        $roles = $this->adminRoles();
 
         return view('admin.users.create', compact('roles'));
     }
@@ -30,7 +37,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::min(8)],
-            'role' => ['required', 'string', Rule::in(array_keys(User::ROLES))],
+            'role' => ['required', 'string', Rule::in(array_keys($this->adminRoles()))],
         ]);
 
         User::create($validated);
@@ -42,7 +49,7 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        $roles = User::ROLES;
+        $roles = $this->adminRoles();
 
         return view('admin.users.edit', compact('user', 'roles'));
     }
@@ -53,7 +60,7 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => ['nullable', 'confirmed', Password::min(8)],
-            'role' => ['required', 'string', Rule::in(array_keys(User::ROLES))],
+            'role' => ['required', 'string', Rule::in(array_keys($this->adminRoles()))],
         ]);
 
         if (empty($validated['password'])) {

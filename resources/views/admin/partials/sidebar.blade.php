@@ -37,12 +37,16 @@
                 </a>
             </li>
 
-            <li>
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
-                    <span>Pelanggan</span>
-                </a>
-            </li>
+            @auth('admin')
+                @if (auth('admin')->user()->canViewUsers())
+                    <li>
+                        <a href="{{ route('admin.pelanggan.index') }}" class="{{ request()->routeIs('admin.pelanggan.*') ? 'active-page' : '' }}">
+                            <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
+                            <span>Pelanggan</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
 
             @auth('admin')
                 @if (auth('admin')->user()->canViewBidans())
