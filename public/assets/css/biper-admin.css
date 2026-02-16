@@ -273,3 +273,1119 @@
 :is(.dark .table tbody tr:hover) {
     background-color: #1F2937;
 }
+
+/* ========================
+   Biper Wizard
+   ======================== */
+
+/* Card wrapper */
+.biper-wizard-card {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 24px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+}
+
+/* Gradient header */
+.biper-wizard-header {
+    background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 50%, #f0fdfe 100%);
+    border-bottom: 1px solid #f3f4f6;
+    padding: 2rem 1.5rem 1.5rem;
+}
+:is(.dark .biper-wizard-header) {
+    background: linear-gradient(135deg, rgba(223, 25, 149, 0.08) 0%, transparent 50%, rgba(64, 215, 227, 0.05) 100%);
+    border-bottom-color: #374151;
+}
+
+/* Steps row */
+.biper-wizard-steps {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* Single step */
+.biper-wizard-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Step icon circle */
+.biper-wizard-step__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    border: 2px solid #d1d5db;
+    background: #fff;
+    color: #9ca3af;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+:is(.dark .biper-wizard-step__icon) {
+    background: #374151;
+    border-color: #4b5563;
+    color: #6b7280;
+}
+.biper-wizard-step.active .biper-wizard-step__icon {
+    border-color: #df1995;
+    background: #df1995;
+    color: #fff;
+    box-shadow: 0 0 0 6px rgba(223, 25, 149, 0.12);
+}
+.biper-wizard-step.completed .biper-wizard-step__icon {
+    border-color: #df1995;
+    background: #df1995;
+    color: #fff;
+}
+
+/* Step label */
+.biper-wizard-step__label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #9ca3af;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+.biper-wizard-step.active .biper-wizard-step__label,
+.biper-wizard-step.completed .biper-wizard-step__label {
+    color: #df1995;
+}
+
+/* Step connector line */
+.biper-wizard-step__connector {
+    flex: 1;
+    height: 2px;
+    background: #e5e7eb;
+    position: relative;
+    margin: 0 8px;
+    margin-top: 23px;
+    min-width: 24px;
+    border-radius: 1px;
+}
+:is(.dark .biper-wizard-step__connector) {
+    background: #4b5563;
+}
+.biper-wizard-step__connector-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0;
+    background: #df1995;
+    transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 1px;
+}
+
+/* ========================
+   Wizard Panels
+   ======================== */
+.biper-wizard-panel {
+    display: none;
+}
+.biper-wizard-panel.active {
+    display: block;
+}
+.biper-wizard-panel.slide-in-right {
+    animation: biperSlideRight 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.biper-wizard-panel.slide-in-left {
+    animation: biperSlideLeft 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+@keyframes biperSlideRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes biperSlideLeft {
+    from { opacity: 0; transform: translateX(-30px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Navigation bar */
+.biper-wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #f9fafb;
+    border-top: 1px solid #f3f4f6;
+}
+:is(.dark .biper-wizard-nav) {
+    background: rgba(55, 65, 81, 0.25);
+    border-top-color: #374151;
+}
+.biper-wizard-nav .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.biper-wizard-btn-submit {
+    padding: 10px 28px !important;
+}
+
+/* Outline neutral button */
+.btn-outline-neutral {
+    border: 1px solid #d1d5db !important;
+    color: #6b7280 !important;
+    background: transparent !important;
+}
+.btn-outline-neutral:hover {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    border-color: #9ca3af !important;
+}
+:is(.dark .btn-outline-neutral) {
+    border-color: #4b5563 !important;
+    color: #9ca3af !important;
+}
+:is(.dark .btn-outline-neutral:hover) {
+    background: #374151 !important;
+    color: #e5e7eb !important;
+}
+
+/* ========================
+   Photo Upload Circle
+   ======================== */
+.biper-photo-upload {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 3px dashed #d1d5db;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+.biper-photo-upload:hover {
+    border-color: #df1995;
+    border-style: solid;
+}
+:is(.dark .biper-photo-upload) {
+    border-color: #4b5563;
+}
+:is(.dark .biper-photo-upload:hover) {
+    border-color: #df1995;
+}
+.biper-photo-upload__preview {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+.biper-photo-upload__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+.biper-photo-upload:hover .biper-photo-upload__overlay {
+    opacity: 1;
+}
+
+/* ========================
+   Map Container
+   ======================== */
+.biper-map-container {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+:is(.dark .biper-map-container) {
+    border-color: #4b5563;
+}
+.biper-map-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #fdf2f8;
+    font-size: 13px;
+    color: #6b7280;
+}
+:is(.dark .biper-map-hint) {
+    background: rgba(223, 25, 149, 0.08);
+    color: #9ca3af;
+}
+.biper-map-container #map {
+    z-index: 1;
+}
+
+/* Coordinate badges */
+.biper-coord-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px;
+    font-size: 13px;
+}
+:is(.dark .biper-coord-badge) {
+    background: #374151;
+    border-color: #4b5563;
+}
+.biper-coord-input {
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    color: #374151;
+    width: 110px;
+    padding: 0;
+    outline: none;
+}
+:is(.dark .biper-coord-input) {
+    color: #e5e7eb;
+}
+
+/* ========================
+   Experience Stepper
+   ======================== */
+.biper-exp-stepper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 4px;
+    height: 48px;
+}
+:is(.dark .biper-exp-stepper) {
+    background: #1f2937;
+    border-color: #374151;
+}
+.biper-exp-stepper__btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: none;
+    background: #fff;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.biper-exp-stepper__btn:hover {
+    color: #df1995;
+    background: #fdf2f8;
+}
+.biper-exp-stepper__btn:active {
+    transform: scale(0.92);
+}
+:is(.dark .biper-exp-stepper__btn) {
+    background: #374151;
+    color: #6b7280;
+    box-shadow: none;
+}
+:is(.dark .biper-exp-stepper__btn:hover) {
+    color: #df1995;
+    background: rgba(223, 25, 149, 0.1);
+}
+.biper-exp-stepper__btn--plus {
+    color: #df1995;
+}
+.biper-exp-stepper__display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    gap: 1px;
+    user-select: none;
+}
+.biper-exp-stepper__value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+:is(.dark .biper-exp-stepper__value) {
+    color: #f3f4f6;
+}
+.biper-exp-stepper__unit {
+    font-size: 10px;
+    font-weight: 500;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ========================
+   Schedule Cards
+   ======================== */
+.biper-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+}
+.biper-schedule-card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.25s ease;
+    background: #fff;
+}
+:is(.dark .biper-schedule-card) {
+    background: #1f2937;
+    border-color: #374151;
+}
+.biper-schedule-card:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+:is(.dark .biper-schedule-card:hover) {
+    border-color: #4b5563;
+}
+.biper-schedule-card.is-active {
+    border-color: #df1995;
+    box-shadow: 0 0 0 1px #df1995, 0 2px 12px rgba(223, 25, 149, 0.08);
+}
+:is(.dark .biper-schedule-card.is-active) {
+    border-color: #df1995;
+    box-shadow: 0 0 0 1px #df1995, 0 2px 12px rgba(223, 25, 149, 0.15);
+}
+
+/* Card header (clickable) */
+.biper-schedule-card__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.2s ease;
+}
+.biper-schedule-card__header:hover {
+    background: #f9fafb;
+}
+:is(.dark .biper-schedule-card__header:hover) {
+    background: rgba(255,255,255,0.03);
+}
+.biper-schedule-card.is-active .biper-schedule-card__header {
+    background: #fdf2f8;
+}
+:is(.dark .biper-schedule-card.is-active .biper-schedule-card__header) {
+    background: rgba(223, 25, 149, 0.08);
+}
+
+/* Day circle */
+.biper-schedule-card__circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+    position: relative;
+}
+:is(.dark .biper-schedule-card__circle) {
+    background: #374151;
+}
+.biper-schedule-card.is-active .biper-schedule-card__circle {
+    background: #df1995;
+}
+.biper-schedule-card__initial {
+    font-size: 14px;
+    font-weight: 700;
+    color: #9ca3af;
+    transition: all 0.25s ease;
+}
+:is(.dark .biper-schedule-card__initial) {
+    color: #6b7280;
+}
+.biper-schedule-card.is-active .biper-schedule-card__initial {
+    display: none;
+}
+.biper-schedule-card__check {
+    display: none;
+    font-size: 20px;
+    color: #fff;
+}
+.biper-schedule-card.is-active .biper-schedule-card__check {
+    display: block;
+}
+
+/* Day name */
+.biper-schedule-card__day,
+.biper-schedule-card__day--short {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    transition: color 0.2s ease;
+}
+:is(.dark .biper-schedule-card__day),
+:is(.dark .biper-schedule-card__day--short) {
+    color: #e5e7eb;
+}
+.biper-schedule-card.is-active .biper-schedule-card__day,
+.biper-schedule-card.is-active .biper-schedule-card__day--short {
+    color: #df1995;
+}
+.biper-schedule-card__day--short {
+    display: none;
+}
+
+/* Card body */
+.biper-schedule-card__body {
+    padding: 0 14px 14px;
+}
+
+/* Off label */
+.biper-schedule-card__off {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #d1d5db;
+    font-size: 12px;
+    font-style: italic;
+    padding: 6px 0;
+}
+:is(.dark .biper-schedule-card__off) {
+    color: #4b5563;
+}
+.biper-schedule-card.is-active .biper-schedule-card__off {
+    display: none;
+}
+
+/* Time fields layout */
+.biper-schedule-card__times {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+}
+.biper-schedule-card.is-active .biper-schedule-card__times {
+    display: flex;
+}
+.biper-schedule-card__time-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.biper-schedule-card__time-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #9ca3af;
+}
+:is(.dark .biper-schedule-card__time-label) {
+    color: #6b7280;
+}
+.biper-schedule-card__divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d1d5db;
+    font-size: 12px;
+}
+:is(.dark .biper-schedule-card__divider) {
+    color: #4b5563;
+}
+
+/* ========================
+   Custom Time Picker (Segmented)
+   ======================== */
+.biper-time-picker {
+    display: flex;
+    align-items: center;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 0 10px;
+    height: 42px;
+    gap: 0;
+    transition: all 0.2s ease;
+}
+.biper-time-picker:focus-within {
+    border-color: #df1995;
+    box-shadow: 0 0 0 3px rgba(223, 25, 149, 0.08);
+}
+:is(.dark .biper-time-picker) {
+    background: #111827;
+    border-color: #374151;
+}
+:is(.dark .biper-time-picker:focus-within) {
+    border-color: #df1995;
+    box-shadow: 0 0 0 3px rgba(223, 25, 149, 0.15);
+}
+.biper-time-picker__icon {
+    color: #df1995;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    cursor: pointer;
+}
+.biper-time-picker:focus-within .biper-time-picker__icon {
+    opacity: 1;
+}
+.biper-time-picker__hour,
+.biper-time-picker__min {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    width: 28px;
+    padding: 0;
+    text-align: center;
+    outline: none;
+    font-family: 'Inter', monospace;
+    caret-color: #df1995;
+}
+.biper-time-picker__hour::placeholder,
+.biper-time-picker__min::placeholder {
+    color: #d1d5db;
+    font-weight: 500;
+}
+:is(.dark .biper-time-picker__hour),
+:is(.dark .biper-time-picker__min) {
+    color: #f3f4f6;
+}
+:is(.dark .biper-time-picker__hour::placeholder),
+:is(.dark .biper-time-picker__min::placeholder) {
+    color: #4b5563;
+}
+.biper-time-picker__hour:disabled,
+.biper-time-picker__min:disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+.biper-time-picker__hour:focus,
+.biper-time-picker__min:focus {
+    background: rgba(223, 25, 149, 0.06);
+    border-radius: 4px;
+}
+.biper-time-picker__sep {
+    font-size: 20px;
+    font-weight: 700;
+    color: #df1995;
+    line-height: 1;
+    user-select: none;
+    margin: 0 1px;
+}
+
+/* ========================
+   Pill Toggle (Employment Type)
+   ======================== */
+.biper-pill-toggle {
+    display: inline-flex;
+    gap: 0;
+    background: #f3f4f6;
+    border-radius: 12px;
+    padding: 4px;
+    border: 1px solid #e5e7eb;
+}
+:is(.dark .biper-pill-toggle) {
+    background: #1f2937;
+    border-color: #374151;
+}
+.biper-pill-toggle__option {
+    cursor: pointer;
+    margin: 0;
+}
+.biper-pill-toggle__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+:is(.dark .biper-pill-toggle__label) {
+    color: #9ca3af;
+}
+.biper-pill-toggle__label:hover {
+    color: #374151;
+}
+:is(.dark .biper-pill-toggle__label:hover) {
+    color: #e5e7eb;
+}
+.biper-pill-toggle__option .peer:checked ~ .biper-pill-toggle__label {
+    background: #df1995;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(223, 25, 149, 0.25);
+}
+:is(.dark .biper-pill-toggle__option .peer:checked ~ .biper-pill-toggle__label) {
+    box-shadow: 0 2px 8px rgba(223, 25, 149, 0.35);
+}
+
+/* ========================
+   Link Account Box
+   ======================== */
+.biper-link-account-box {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+}
+:is(.dark .biper-link-account-box) {
+    background: rgba(55, 65, 81, 0.25);
+    border-color: #374151;
+}
+.biper-linked-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #16a34a;
+}
+:is(.dark .biper-linked-info) {
+    color: #4ade80;
+}
+
+/* ========================
+   Detail Profile Card
+   ======================== */
+.biper-detail-card {
+    border: 0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 4px 24px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+}
+
+/* Hero header */
+.biper-detail-hero {
+    background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 40%, #f0fdfe 100%);
+    padding: 2rem 2rem 1.75rem;
+    position: relative;
+}
+:is(.dark .biper-detail-hero) {
+    background: linear-gradient(135deg, rgba(223, 25, 149, 0.1) 0%, transparent 40%, rgba(64, 215, 227, 0.06) 100%);
+}
+.biper-detail-hero__avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+:is(.dark .biper-detail-hero__avatar) {
+    border-color: #374151;
+}
+.biper-detail-hero__initials {
+    width: 100px;
+    height: 100px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #df1995, #f472b6);
+    color: #fff;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 16px rgba(223, 25, 149, 0.25);
+}
+.biper-detail-hero__name {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+:is(.dark .biper-detail-hero__name) {
+    color: #f3f4f6;
+}
+.biper-detail-hero__spec {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+:is(.dark .biper-detail-hero__spec) {
+    color: #9ca3af;
+}
+.biper-detail-hero__badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Status & type badges */
+.biper-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+.biper-badge--active {
+    background: rgba(22, 163, 74, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(22, 163, 74, 0.2);
+}
+:is(.dark .biper-badge--active) {
+    background: rgba(74, 222, 128, 0.1);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.2);
+}
+.biper-badge--inactive {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+}
+:is(.dark .biper-badge--inactive) {
+    background: rgba(248, 113, 113, 0.1);
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
+}
+.biper-badge--fulltime {
+    background: rgba(223, 25, 149, 0.08);
+    color: #df1995;
+    border: 1px solid rgba(223, 25, 149, 0.15);
+}
+:is(.dark .biper-badge--fulltime) {
+    background: rgba(223, 25, 149, 0.12);
+    border-color: rgba(223, 25, 149, 0.25);
+}
+.biper-badge--freelance {
+    background: rgba(64, 215, 227, 0.1);
+    color: #0891b2;
+    border: 1px solid rgba(64, 215, 227, 0.2);
+}
+:is(.dark .biper-badge--freelance) {
+    background: rgba(64, 215, 227, 0.12);
+    color: #40d7e3;
+    border-color: rgba(64, 215, 227, 0.25);
+}
+
+/* Info stat cards */
+.biper-detail-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    padding: 1.5rem 2rem;
+}
+.biper-detail-stat {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #f9fafb;
+    border: 1px solid #f3f4f6;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+.biper-detail-stat:hover {
+    border-color: #e5e7eb;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+:is(.dark .biper-detail-stat) {
+    background: rgba(55, 65, 81, 0.25);
+    border-color: #374151;
+}
+:is(.dark .biper-detail-stat:hover) {
+    border-color: #4b5563;
+}
+.biper-detail-stat__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+.biper-detail-stat__icon--pink {
+    background: rgba(223, 25, 149, 0.08);
+    color: #df1995;
+}
+:is(.dark .biper-detail-stat__icon--pink) {
+    background: rgba(223, 25, 149, 0.15);
+}
+.biper-detail-stat__icon--cyan {
+    background: rgba(64, 215, 227, 0.1);
+    color: #0891b2;
+}
+:is(.dark .biper-detail-stat__icon--cyan) {
+    color: #40d7e3;
+    background: rgba(64, 215, 227, 0.15);
+}
+.biper-detail-stat__icon--amber {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+:is(.dark .biper-detail-stat__icon--amber) {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.15);
+}
+.biper-detail-stat__icon--purple {
+    background: rgba(139, 92, 246, 0.08);
+    color: #7c3aed;
+}
+:is(.dark .biper-detail-stat__icon--purple) {
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.15);
+}
+.biper-detail-stat__label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #9ca3af;
+    margin-bottom: 2px;
+}
+:is(.dark .biper-detail-stat__label) {
+    color: #6b7280;
+}
+.biper-detail-stat__value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1f2937;
+    word-break: break-word;
+}
+:is(.dark .biper-detail-stat__value) {
+    color: #f3f4f6;
+}
+.biper-detail-stat__value--muted {
+    color: #d1d5db;
+    font-weight: 400;
+    font-style: italic;
+}
+:is(.dark .biper-detail-stat__value--muted) {
+    color: #4b5563;
+}
+
+/* Section blocks */
+.biper-detail-section {
+    padding: 0 2rem 1.75rem;
+}
+.biper-detail-section__title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+:is(.dark .biper-detail-section__title) {
+    color: #6b7280;
+}
+.biper-detail-section__title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #f3f4f6;
+}
+:is(.dark .biper-detail-section__title::after) {
+    background: #374151;
+}
+.biper-detail-bio {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4b5563;
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border: 1px solid #f3f4f6;
+}
+:is(.dark .biper-detail-bio) {
+    color: #d1d5db;
+    background: rgba(55, 65, 81, 0.25);
+    border-color: #374151;
+}
+
+/* Schedule read-only grid */
+.biper-detail-schedule {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+.biper-detail-schedule__day {
+    text-align: center;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #f3f4f6;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+}
+:is(.dark .biper-detail-schedule__day) {
+    background: rgba(55, 65, 81, 0.25);
+    border-color: #374151;
+}
+.biper-detail-schedule__day.is-active {
+    border-color: #df1995;
+    background: #fff;
+    box-shadow: 0 0 0 1px rgba(223, 25, 149, 0.15);
+}
+:is(.dark .biper-detail-schedule__day.is-active) {
+    background: rgba(223, 25, 149, 0.05);
+    box-shadow: 0 0 0 1px rgba(223, 25, 149, 0.25);
+}
+.biper-detail-schedule__head {
+    padding: 10px 8px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #d1d5db;
+}
+:is(.dark .biper-detail-schedule__head) {
+    color: #4b5563;
+}
+.biper-detail-schedule__day.is-active .biper-detail-schedule__head {
+    color: #df1995;
+}
+.biper-detail-schedule__time {
+    padding: 4px 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #9ca3af;
+}
+:is(.dark .biper-detail-schedule__time) {
+    color: #6b7280;
+}
+.biper-detail-schedule__day.is-active .biper-detail-schedule__time {
+    color: #374151;
+}
+:is(.dark .biper-detail-schedule__day.is-active .biper-detail-schedule__time) {
+    color: #e5e7eb;
+}
+
+/* Detail map */
+.biper-detail-map {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+:is(.dark .biper-detail-map) {
+    border-color: #4b5563;
+}
+.biper-detail-map #map {
+    z-index: 1;
+    height: 280px;
+}
+
+/* Action buttons row */
+.biper-detail-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.biper-detail-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+}
+.biper-detail-actions .btn--edit {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+.biper-detail-actions .btn--edit:hover {
+    background: rgba(245, 158, 11, 0.18);
+}
+:is(.dark .biper-detail-actions .btn--edit) {
+    color: #fbbf24;
+}
+.biper-detail-actions .btn--back {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+.biper-detail-actions .btn--back:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+:is(.dark .biper-detail-actions .btn--back) {
+    background: #374151;
+    color: #9ca3af;
+}
+:is(.dark .biper-detail-actions .btn--back:hover) {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+/* ========================
+   Wizard Responsive
+   ======================== */
+@media (max-width: 640px) {
+    .biper-wizard-step__label {
+        display: none;
+    }
+    .biper-wizard-step__connector {
+        margin-top: 23px;
+    }
+    .biper-wizard-header {
+        padding: 1.5rem 1rem 1.25rem;
+    }
+    .biper-wizard-nav {
+        padding: 0.875rem 1rem;
+    }
+    .biper-schedule-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .biper-schedule-card__day {
+        display: none;
+    }
+    .biper-schedule-card__day--short {
+        display: block;
+    }
+    .biper-detail-hero {
+        padding: 1.5rem 1.25rem 1.25rem;
+    }
+    .biper-detail-stats {
+        padding: 1.25rem;
+        grid-template-columns: 1fr 1fr;
+    }
+    .biper-detail-section {
+        padding: 0 1.25rem 1.5rem;
+    }
+    .biper-detail-schedule {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    }
+}

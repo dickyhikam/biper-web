@@ -10,6 +10,14 @@ class Bidan extends Model
 {
     use HasFactory;
 
+    const TYPE_FULLTIME = 'fulltime';
+    const TYPE_FREELANCE = 'freelance';
+
+    const EMPLOYMENT_TYPES = [
+        self::TYPE_FULLTIME => 'Fulltime',
+        self::TYPE_FREELANCE => 'Freelance',
+    ];
+
     protected $fillable = [
         'user_id',
         'name',
@@ -18,6 +26,7 @@ class Bidan extends Model
         'phone',
         'str_number',
         'experience_years',
+        'employment_type',
         'photo',
         'bio',
         'address',
