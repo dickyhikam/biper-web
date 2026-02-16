@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BidanController;
+use App\Http\Controllers\Admin\SlideController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -72,5 +73,19 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::middleware('role:super_admin,admin,owner,bidan_terapis')->group(function () {
         Route::get('/bidans', [BidanController::class, 'index'])->name('bidans.index');
         Route::get('/bidans/{bidan}', [BidanController::class, 'show'])->name('bidans.show');
+    });
+
+    // Slide/Banner management - view
+    Route::get('/slides', [SlideController::class, 'index'])
+        ->name('slides.index')
+        ->middleware('role:super_admin,admin,owner');
+
+    // Slide/Banner management - create, edit, delete
+    Route::middleware('role:super_admin,owner')->group(function () {
+        Route::get('/slides/create', [SlideController::class, 'create'])->name('slides.create');
+        Route::post('/slides', [SlideController::class, 'store'])->name('slides.store');
+        Route::get('/slides/{slide}/edit', [SlideController::class, 'edit'])->name('slides.edit');
+        Route::put('/slides/{slide}', [SlideController::class, 'update'])->name('slides.update');
+        Route::delete('/slides/{slide}', [SlideController::class, 'destroy'])->name('slides.destroy');
     });
 });

@@ -1,31 +1,21 @@
 <x-landing-page>
     <x-slot:title>Home - Biper Baby Spa Sidoarjo</x-slot:title>
 
-    <div x-data="{ 
+    {{-- Slide data for Alpine.js (formatter-safe) --}}
+    <div id="slidesData" class="hidden"
+        data-slides="{{ json_encode($slides->map(fn ($s) => [
+            'img' => $s->image_url ?: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=1600&q=80',
+            'title' => $s->title,
+            'subtitle' => $s->subtitle ?? '',
+            'cta' => $s->cta_text ?: 'Reservasi Sekarang',
+            'cta_link' => $s->cta_link ?: '#booking',
+            'color' => $s->overlay_class,
+        ])->values()) }}">
+    </div>
+
+    <div x-data="{
         activeSlide: 0,
-        slides: [
-            { 
-                img: 'https://images.unsplash.com/photo-1519689680058-324335c77eba?w=1600&q=80', 
-                title: 'Sentuhan Cinta Medis', 
-                subtitle: 'Kombinasi perawatan spa modern & kesehatan medis untuk buah hati.',
-                cta: 'Reservasi Sekarang',
-                color: 'from-biper-pink/90' // Menggunakan Pink Biper
-            },
-            { 
-                img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=1600&q=80', 
-                title: 'Home Care Service', 
-                subtitle: 'Bunda istirahat, biarkan Bidan kami yang datang merawat si kecil di rumah.',
-                cta: 'Panggil Bidan',
-                color: 'from-biper-blue/90' // Menggunakan Blue Biper
-            },
-            { 
-                img: 'https://images.unsplash.com/photo-1600093463592-8e36ae95ef56?w=1600&q=80', 
-                title: 'Mom & Baby Wellness', 
-                subtitle: 'Relaksasi pasca melahirkan dan pijat laktasi untuk kelancaran ASI.',
-                cta: 'Lihat Paket',
-                color: 'from-gray-900/90' // Netral
-            }
-        ],
+        slides: JSON.parse(document.getElementById('slidesData').dataset.slides),
         timer: null,
         next() {
             this.activeSlide = (this.activeSlide + 1) % this.slides.length;
@@ -39,8 +29,9 @@
             clearInterval(this.timer);
             this.timer = setInterval(() => { this.next(); }, 6000);
         },
-        init() { this.resetTimer(); }
-    }" class="relative w-full h-[600px] lg:h-[750px] overflow-hidden group font-sans">
+        init() { if (this.slides.length > 0) this.resetTimer(); }
+    }" class="relative w-full h-[600px] lg:h-[750px] overflow-hidden group font-sans"
+       x-show="slides.length > 0">
 
         <template x-for="(slide, index) in slides" :key="index">
             <div x-show="activeSlide === index" class="absolute inset-0 w-full h-full">
@@ -78,7 +69,7 @@
                                 x-transition:enter="transition ease-out duration-700 delay-700"
                                 x-transition:enter-start="opacity-0 scale-90"
                                 x-transition:enter-end="opacity-100 scale-100">
-                                <a href="#booking"
+                                <a :href="slide.cta_link"
                                     class="group inline-flex items-center gap-3 bg-white text-gray-900 px-8 py-4 rounded-full font-bold shadow-2xl hover:bg-biper-pink-light transition-all duration-300 transform hover:-translate-y-1">
                                     <span x-text="slide.cta"></span>
                                     <i class="fas fa-arrow-right text-biper-pink group-hover:translate-x-1 transition-transform"></i>

@@ -100,6 +100,16 @@ class User extends Authenticatable
         ]);
     }
 
+    public function canManageSlides(): bool
+    {
+        return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_OWNER]);
+    }
+
+    public function canViewSlides(): bool
+    {
+        return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN, self::ROLE_OWNER]);
+    }
+
     public function getRoleLabelAttribute(): string
     {
         return self::ROLES[$this->role] ?? $this->role;

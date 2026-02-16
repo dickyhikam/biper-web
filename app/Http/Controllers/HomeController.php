@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Slide;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        return view('home.index');
+        $slides = Slide::active()->ordered()->get();
+
+        return view('home.index', compact('slides'));
     }
 }

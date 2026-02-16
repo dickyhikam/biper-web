@@ -55,6 +55,19 @@
                 @endif
             @endauth
 
+            <li class="sidebar-menu-group-title">Konten Website</li>
+
+            @auth('admin')
+                @if (auth('admin')->user()->canViewSlides())
+                    <li>
+                        <a href="{{ route('admin.slides.index') }}" class="{{ request()->routeIs('admin.slides.*') ? 'active-page' : '' }}">
+                            <iconify-icon icon="solar:gallery-minimalistic-outline" class="menu-icon"></iconify-icon>
+                            <span>Slide / Banner</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
+
             <li class="sidebar-menu-group-title">Keuangan</li>
 
             <li>
