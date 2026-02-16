@@ -34,7 +34,7 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table class="table bordered-table sm-table mb-0 table-auto w-full">
+                <table id="usersTable" class="table bordered-table sm-table mb-0 table-auto w-full">
                     <thead>
                         <tr>
                             <th scope="col">No</th>
@@ -43,14 +43,14 @@
                             <th scope="col">Role</th>
                             <th scope="col">Dibuat</th>
                             @if (auth('admin')->user()->canManageUsers())
-                                <th scope="col" class="text-center">Aksi</th>
+                                <th scope="col" class="text-center" data-sortable="false">Aksi</th>
                             @endif
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($users as $index => $user)
                             <tr>
-                                <td>{{ $users->firstItem() + $index }}</td>
+                                <td>{{ $index + 1 }}</td>
                                 <td>
                                     <div class="flex items-center">
                                         <div class="w-10 h-10 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex justify-center items-center shrink-0 me-2 font-semibold">
@@ -108,13 +108,35 @@
                     </tbody>
                 </table>
             </div>
-
-            @if ($users->hasPages())
-                <div class="mt-4">
-                    {{ $users->links() }}
-                </div>
-            @endif
         </div>
     </div>
 
 @endsection
+
+@push('scripts')
+    <script>
+        if (document.getElementById("usersTable") && typeof simpleDatatables.DataTable !== 'undefined') {
+            var unsortableCols = [{ select: 0, sortable: false }];
+            var lastCol = document.querySelector("#usersTable thead tr").children.length - 1;
+            if (document.querySelector("#usersTable th[data-sortable='false']")) {
+                unsortableCols.push({ select: lastCol, sortable: false });
+            }
+            new simpleDatatables.DataTable("#usersTable", {
+                searchable: true,
+                sortable: true,
+                perPage: 10,
+                labels: {
+                    placeholder: "Cari...",
+                    noRows: "Tidak ada data",
+                    info: "Menampilkan {start} - {end} dari {rows} data",
+                    perPage: "{select} data per halaman",
+                },
+                columns: unsortableCols,
+                layout: {
+                    top: "{search}{select}",
+                    bottom: "{info}{pager}",
+                },
+            });
+        }
+    </script>
+@endpush

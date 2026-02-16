@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -71,6 +72,11 @@ class User extends Authenticatable
         return in_array($this->role, $roles);
     }
 
+    public function bidan(): HasOne
+    {
+        return $this->hasOne(Bidan::class);
+    }
+
     public function canManageUsers(): bool
     {
         return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_OWNER]);
@@ -79,6 +85,19 @@ class User extends Authenticatable
     public function canViewUsers(): bool
     {
         return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_OWNER, self::ROLE_ADMIN]);
+    }
+
+    public function canManageBidans(): bool
+    {
+        return $this->hasRole([self::ROLE_SUPER_ADMIN, self::ROLE_OWNER]);
+    }
+
+    public function canViewBidans(): bool
+    {
+        return $this->hasRole([
+            self::ROLE_SUPER_ADMIN, self::ROLE_ADMIN,
+            self::ROLE_OWNER, self::ROLE_BIDAN_TERAPIS,
+        ]);
     }
 
     public function getRoleLabelAttribute(): string

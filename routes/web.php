@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\BidanController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -56,5 +57,20 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
+
+    // Bidan/Terapis management - create, edit, delete (harus sebelum show route)
+    Route::middleware('role:super_admin,owner')->group(function () {
+        Route::get('/bidans/create', [BidanController::class, 'create'])->name('bidans.create');
+        Route::post('/bidans', [BidanController::class, 'store'])->name('bidans.store');
+        Route::get('/bidans/{bidan}/edit', [BidanController::class, 'edit'])->name('bidans.edit');
+        Route::put('/bidans/{bidan}', [BidanController::class, 'update'])->name('bidans.update');
+        Route::delete('/bidans/{bidan}', [BidanController::class, 'destroy'])->name('bidans.destroy');
+    });
+
+    // Bidan/Terapis management - view
+    Route::middleware('role:super_admin,admin,owner,bidan_terapis')->group(function () {
+        Route::get('/bidans', [BidanController::class, 'index'])->name('bidans.index');
+        Route::get('/bidans/{bidan}', [BidanController::class, 'show'])->name('bidans.show');
     });
 });

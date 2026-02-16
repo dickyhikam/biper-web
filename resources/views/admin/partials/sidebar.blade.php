@@ -44,12 +44,16 @@
                 </a>
             </li>
 
-            <li>
-                <a href="javascript:void(0)">
-                    <iconify-icon icon="solar:user-hands-outline" class="menu-icon"></iconify-icon>
-                    <span>Bidan / Terapis</span>
-                </a>
-            </li>
+            @auth('admin')
+                @if (auth('admin')->user()->canViewBidans())
+                    <li>
+                        <a href="{{ route('admin.bidans.index') }}" class="{{ request()->routeIs('admin.bidans.*') ? 'active-page' : '' }}">
+                            <iconify-icon icon="solar:user-hands-outline" class="menu-icon"></iconify-icon>
+                            <span>Bidan / Terapis</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
 
             <li class="sidebar-menu-group-title">Keuangan</li>
 
