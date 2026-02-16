@@ -69,6 +69,10 @@
                                 </div>
 
                                 <div class="py-1">
+                                    <a href="{{ route('profil.edit') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-biper-pink-light/30 hover:text-biper-pink transition">
+                                        <i class="fas fa-user-pen w-4 text-center"></i>
+                                        Edit Profil
+                                    </a>
                                     <a href="{{ route('anak.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-biper-pink-light/30 hover:text-biper-pink transition">
                                         <i class="fas fa-baby w-4 text-center"></i>
                                         Data Anak

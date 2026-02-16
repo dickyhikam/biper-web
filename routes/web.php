@@ -7,6 +7,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\Auth\AnakController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -34,6 +35,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
     Route::post('/email/verify', [EmailVerificationController::class, 'verify'])->name('verification.verify');
     Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('verification.resend');
+});
+
+// Profil routes
+Route::middleware('auth')->group(function () {
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profil.edit');
+    Route::put('/profil', [ProfileController::class, 'update'])->name('profil.update');
+    Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profil.password');
 });
 
 // Data anak routes
