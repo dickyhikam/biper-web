@@ -10,6 +10,11 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
+        // Sudah login → redirect ke home
+        if (Auth::check()) {
+            return redirect()->route('pageHome');
+        }
+
         return view('auth.login');
     }
 

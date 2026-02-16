@@ -16,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => RoleMiddleware::class,
         ]);
 
-        // Redirect unauthenticated users: admin routes → /admin/login, lainnya → /login
+        // Redirect unauthenticated users berdasarkan guard
         $middleware->redirectGuestsTo(function ($request) {
             if ($request->is('admin/*') || $request->is('admin')) {
                 return route('admin.login');

@@ -24,7 +24,7 @@
         <div class="card-body p-6">
             <div class="flex items-center flex-wrap gap-2 justify-between mb-4">
                 <h6 class="font-bold text-lg mb-0">Daftar User</h6>
-                @if (auth()->user()->canManageUsers())
+                @if (auth('admin')->user()->canManageUsers())
                     <a href="{{ route('admin.users.create') }}"
                        class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition">
                         <iconify-icon icon="solar:add-circle-outline" class="text-lg"></iconify-icon>
@@ -42,7 +42,7 @@
                             <th scope="col">Email</th>
                             <th scope="col">Role</th>
                             <th scope="col">Dibuat</th>
-                            @if (auth()->user()->canManageUsers())
+                            @if (auth('admin')->user()->canManageUsers())
                                 <th scope="col" class="text-center">Aksi</th>
                             @endif
                         </tr>
@@ -74,7 +74,7 @@
                                     </span>
                                 </td>
                                 <td>{{ $user->created_at->format('d M Y') }}</td>
-                                @if (auth()->user()->canManageUsers())
+                                @if (auth('admin')->user()->canManageUsers())
                                     <td class="text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             <a href="{{ route('admin.users.edit', $user) }}"
@@ -82,7 +82,7 @@
                                                title="Edit">
                                                 <iconify-icon icon="solar:pen-outline" class="text-sm"></iconify-icon>
                                             </a>
-                                            @if ($user->id !== auth()->id())
+                                            @if ($user->id !== auth('admin')->id())
                                                 <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
                                                       onsubmit="return confirm('Yakin ingin menghapus user ini?')">
                                                     @csrf
@@ -100,7 +100,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="{{ auth()->user()->canManageUsers() ? 6 : 5 }}" class="text-center py-8 text-neutral-500">
+                                <td colspan="{{ auth('admin')->user()->canManageUsers() ? 6 : 5 }}" class="text-center py-8 text-neutral-500">
                                     Belum ada data user.
                                 </td>
                             </tr>

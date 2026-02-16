@@ -17,10 +17,8 @@ Route::get('/tentang', [TentangController::class, 'index'])->name('pageTentang')
 Route::get('/booking', [BookingController::class, 'index'])->name('pageBooking');
 
 // Frontend auth routes (untuk pelanggan)
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [LoginController::class, 'login']);
-});
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::get('/register', function () {
@@ -35,17 +33,15 @@ Route::get('/reset-password', function () {
     return view('auth.reset-password');
 })->name('password.reset');
 
-// Admin auth routes (terpisah dari frontend)
+// Admin auth routes (terpisah dari frontend, guard: admin)
 Route::prefix('admin')->name('admin.')->group(function () {
-    Route::middleware('guest')->group(function () {
-        Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-        Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
-    });
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth:admin');
 });
 
-// Admin panel routes (butuh auth)
-Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
+// Admin panel routes (butuh auth guard admin)
+Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     // User management - view

@@ -10,11 +10,13 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        if (!$request->user()) {
+        $user = auth('admin')->user();
+
+        if (!$user) {
             return redirect()->route('admin.login');
         }
 
-        if (!$request->user()->hasRole($roles)) {
+        if (!$user->hasRole($roles)) {
             abort(403, 'Anda tidak memiliki akses ke halaman ini.');
         }
 

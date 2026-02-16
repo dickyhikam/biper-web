@@ -9,8 +9,20 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    protected function guard()
+    {
+        return Auth::guard('admin');
+    }
+
     public function showLoginForm()
     {
+        // Sudah login sebagai admin → langsung ke dashboard
+        if ($this->guard()->check() && $this->guard()->user()->hasRole([
+            User::ROLE_SUPER_ADMIN, User::ROLE_OWNER, User::ROLE_ADMIN, User::ROLE_BIDAN_TERAPIS
+        ])) {
+            return redirect()->route('admin.dashboard');
+        }
+
         return view('admin.auth.login');
     }
 
@@ -21,8 +33,8 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            $user = Auth::user();
+        if ($this->guard()->attempt($credentials, $request->boolean('remember'))) {
+            $user = $this->guard()->user();
 
             // Hanya role admin yang boleh login di sini
             if ($user->isBidanTerapis() || $user->isAdmin() || $user->isOwner() || $user->isSuperAdmin()) {
@@ -31,7 +43,7 @@ class AuthController extends Controller
             }
 
             // Bukan role admin, logout dan tolak
-            Auth::logout();
+            $this->guard()->logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
@@ -47,7 +59,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        Auth::logout();
+        $this->guard()->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

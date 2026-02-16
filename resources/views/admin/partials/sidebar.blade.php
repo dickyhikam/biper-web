@@ -69,8 +69,8 @@
 
             <li class="sidebar-menu-group-title">Pengaturan</li>
 
-            @auth
-                @if (auth()->user()->canViewUsers())
+            @auth('admin')
+                @if (auth('admin')->user()->canViewUsers())
                     <li>
                         <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active-page' : '' }}">
                             <iconify-icon icon="solar:users-group-rounded-outline" class="menu-icon"></iconify-icon>
