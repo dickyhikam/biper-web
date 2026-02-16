@@ -122,19 +122,26 @@
                 unsortableCols.push({ select: lastCol, sortable: false });
             }
             new simpleDatatables.DataTable("#usersTable", {
-                searchable: true,
-                sortable: true,
                 perPage: 10,
+                columns: unsortableCols,
                 labels: {
                     placeholder: "Cari...",
+                    searchTitle: "Cari dalam tabel",
                     noRows: "Tidak ada data",
+                    noResults: "Tidak ada hasil yang cocok",
                     info: "Menampilkan {start} - {end} dari {rows} data",
-                    perPage: "{select} data per halaman",
+                    perPage: "data per halaman",
                 },
-                columns: unsortableCols,
-                layout: {
-                    top: "{search}{select}",
-                    bottom: "{info}{pager}",
+                template: function(options, dom) {
+                    return '<div class="' + options.classes.top + '">'
+                        + (options.searchable ? '<div class="' + options.classes.search + '"><input class="' + options.classes.input + '" placeholder="' + options.labels.placeholder + '" type="search" name="search" title="' + options.labels.searchTitle + '"' + (dom.id ? ' aria-controls="' + dom.id + '"' : '') + '></div>' : '')
+                        + (options.paging && options.perPageSelect ? '<div class="' + options.classes.dropdown + '"><label><select class="' + options.classes.selector + '" name="per-page"></select> ' + options.labels.perPage + '</label></div>' : '')
+                        + '</div>'
+                        + '<div class="' + options.classes.container + '"' + (options.scrollY.length ? ' style="height: ' + options.scrollY + '; overflow-Y: auto;"' : '') + '></div>'
+                        + '<div class="' + options.classes.bottom + '">'
+                        + (options.paging ? '<div class="' + options.classes.info + '"></div>' : '')
+                        + '<nav class="' + options.classes.pagination + '"></nav>'
+                        + '</div>';
                 },
             });
         }

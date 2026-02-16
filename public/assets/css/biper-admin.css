@@ -255,3 +255,21 @@
     background-color: #df1995;
     border-color: #df1995;
 }
+
+/* ========================
+   DataTable Row Hover
+   ======================== */
+.datatable-wrapper .datatable-table tbody tr:hover {
+    background-color: #F9FAFB;
+    transition: background-color 0.15s ease;
+}
+:is(.dark .datatable-wrapper .datatable-table tbody tr:hover) {
+    background-color: #1F2937;
+}
+.table tbody tr:hover {
+    background-color: #F9FAFB;
+    transition: background-color 0.15s ease;
+}
+:is(.dark .table tbody tr:hover) {
+    background-color: #1F2937;
+}
