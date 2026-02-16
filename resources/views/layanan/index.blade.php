@@ -56,7 +56,7 @@
                         <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 text-lg"></i> <span>Baby Swim (15 Menit)</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-times-circle text-gray-300 text-lg"></i> <span class="text-gray-400">Massage</span></li>
                     </ul>
-                    <a href="#" class="block w-full py-3 rounded-xl border-2 border-biper-blue text-biper-blue font-bold text-center group-hover:bg-biper-blue group-hover:text-white transition-colors">
+                    <a href="{{ route('pageBooking') }}?service=1" class="block w-full py-3 rounded-xl border-2 border-biper-blue text-biper-blue font-bold text-center group-hover:bg-biper-blue group-hover:text-white transition-colors">
                         Pilih Paket
                     </a>
                 </div>
@@ -79,7 +79,7 @@
                         <li class="flex items-center gap-3"><i class="fas fa-check-circle text-biper-pink text-lg"></i> <strong>Organic Massage</strong> (Pijat)</li>
                         <li class="flex items-center gap-3"><i class="fas fa-gift text-biper-pink text-lg"></i> Free Mainan & Snack</li>
                     </ul>
-                    <a href="#" class="block w-full py-4 rounded-2xl bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white font-bold text-center shadow-lg shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:scale-[1.02] transition-all">
+                    <a href="{{ route('pageBooking') }}?service=1" class="block w-full py-4 rounded-2xl bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white font-bold text-center shadow-lg shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:scale-[1.02] transition-all">
                         Booking Sekarang
                     </a>
                 </div>
@@ -98,7 +98,7 @@
                         <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 text-lg"></i> <span>Pijat Oksitosin (Ibu)</span></li>
                         <li class="flex items-center gap-3"><i class="fas fa-check-circle text-green-500 text-lg"></i> <span>Quality Time</span></li>
                     </ul>
-                    <a href="#" class="block w-full py-3 rounded-xl border-2 border-biper-blue text-biper-blue font-bold text-center group-hover:bg-biper-blue group-hover:text-white transition-colors">
+                    <a href="{{ route('pageBooking') }}?service=1" class="block w-full py-3 rounded-xl border-2 border-biper-blue text-biper-blue font-bold text-center group-hover:bg-biper-blue group-hover:text-white transition-colors">
                         Pilih Paket
                     </a>
                 </div>
@@ -138,7 +138,7 @@
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Kolik / Sembelit</li>
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Susah Makan</li>
                         </ul>
-                        <a href="#" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
+                        <a href="{{ route('pageBooking') }}?service=2" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
                     </div>
                 </div>
 
@@ -160,7 +160,7 @@
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Pelampung Neckring</li>
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Melatih Motorik</li>
                         </ul>
-                        <a href="#" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
+                        <a href="{{ route('pageBooking') }}?service=2" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
                     </div>
                 </div>
 
@@ -179,7 +179,7 @@
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Styling Balita</li>
                             <li><i class="fas fa-check text-green-500 mr-2"></i>Free Mainan</li>
                         </ul>
-                        <a href="#" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
+                        <a href="{{ route('pageBooking') }}?service=2" class="block w-full py-3 rounded-xl border border-gray-200 text-gray-600 font-bold text-center hover:bg-biper-blue hover:text-white hover:border-biper-blue transition">Booking</a>
                     </div>
                 </div>
             </div>
@@ -208,7 +208,7 @@
                         <p class="text-sm text-gray-500 mb-6">Pijat khusus area payudara dan punggung untuk melancarkan sumbatan ASI dan relaksasi.</p>
                         <div class="flex justify-between items-center mt-auto">
                             <span class="text-2xl font-bold text-biper-pink">175K</span>
-                            <a href="#" class="px-6 py-2 bg-biper-pink text-white text-sm font-bold rounded-xl hover:bg-biper-pink-dark transition shadow-lg shadow-biper-pink/20">Booking</a>
+                            <a href="{{ route('pageBooking') }}?service=5" class="px-6 py-2 bg-biper-pink text-white text-sm font-bold rounded-xl hover:bg-biper-pink-dark transition shadow-lg shadow-biper-pink/20">Booking</a>
                         </div>
                     </div>
                 </div>
@@ -224,7 +224,7 @@
                         <p class="text-sm text-gray-500 mb-6">Pijat nifas seluruh tubuh pasca melahirkan untuk mengembalikan kebugaran.</p>
                         <div class="flex justify-between items-center mt-auto">
                             <span class="text-2xl font-bold text-biper-pink">200K</span>
-                            <a href="#" class="px-6 py-2 bg-biper-pink text-white text-sm font-bold rounded-xl hover:bg-biper-pink-dark transition shadow-lg shadow-biper-pink/20">Booking</a>
+                            <a href="{{ route('pageBooking') }}?service=5" class="px-6 py-2 bg-biper-pink text-white text-sm font-bold rounded-xl hover:bg-biper-pink-dark transition shadow-lg shadow-biper-pink/20">Booking</a>
                         </div>
                     </div>
                 </div>
@@ -315,7 +315,7 @@
             </div>
 
             <div class="mt-16">
-                <a href="#" class="inline-flex items-center gap-3 bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:-translate-y-1 transition-all duration-300">
+                <a href="{{ route('pageBooking') }}" class="inline-flex items-center gap-3 bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white font-bold text-lg px-10 py-4 rounded-full shadow-xl shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:-translate-y-1 transition-all duration-300">
                     <i class="fas fa-calendar-check"></i>
                     <span>Booking Slot Sekarang</span>
                 </a>

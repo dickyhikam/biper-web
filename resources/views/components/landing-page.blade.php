@@ -40,13 +40,23 @@
                         Layanan
                     </a>
 
-                    <a href="{{ url('/tentang') }}"
-                        class="{{ request()->is('tentang*') ? 'text-biper-pink font-bold' : 'text-gray-500 font-medium' }} hover:text-biper-pink transition">
+                    <a href="{{ route('pageTentang') }}"
+                        class="{{ request()->routeIs('pageTentang') ? 'text-biper-pink font-bold' : 'text-gray-500 font-medium' }} hover:text-biper-pink transition">
                         Tentang
                     </a>
 
-                    <a href="#" class="bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:-translate-y-0.5 transition-all duration-300">
-                        Booking Online
+                    {{-- Login Link --}}
+                    <a href="#" class="inline-flex items-center gap-2 text-gray-600 hover:text-biper-blue font-medium transition-colors group">
+                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-biper-blue-light transition-colors">
+                            <i class="fas fa-user text-sm"></i>
+                        </div>
+                        <span class="text-sm">Masuk</span>
+                    </a>
+
+                    {{-- Booking Online Button --}}
+                    <a href="{{ route('pageBooking') }}" class="bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2">
+                        <i class="fas fa-calendar-check"></i>
+                        <span>Booking Online</span>
                     </a>
 
                 </div>
