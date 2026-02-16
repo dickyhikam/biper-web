@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -92,6 +93,16 @@ class User extends Authenticatable
     public function bidan(): HasOne
     {
         return $this->hasOne(Bidan::class);
+    }
+
+    public function anaks(): HasMany
+    {
+        return $this->hasMany(Anak::class);
+    }
+
+    public function needsChildData(): bool
+    {
+        return $this->isPelanggan() && $this->hasVerifiedEmail() && $this->anaks()->count() === 0;
     }
 
     public function canManageUsers(): bool

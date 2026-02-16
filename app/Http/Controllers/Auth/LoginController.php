@@ -39,6 +39,10 @@ class LoginController extends Controller
                 return redirect()->route('verification.notice');
             }
 
+            if ($user->needsChildData()) {
+                return redirect()->route('anak.create');
+            }
+
             return redirect()->intended(route('pageHome'));
         }
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\TentangController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\Auth\AnakController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -33,6 +34,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
     Route::post('/email/verify', [EmailVerificationController::class, 'verify'])->name('verification.verify');
     Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('verification.resend');
+});
+
+// Data anak routes (setelah verifikasi email)
+Route::middleware('auth')->group(function () {
+    Route::get('/data-anak', [AnakController::class, 'create'])->name('anak.create');
+    Route::post('/data-anak', [AnakController::class, 'store'])->name('anak.store');
+    Route::post('/data-anak/complete', [AnakController::class, 'complete'])->name('anak.complete');
+    Route::delete('/data-anak/{anak}', [AnakController::class, 'destroy'])->name('anak.destroy');
 });
 
 Route::get('/forgot-password', function () {

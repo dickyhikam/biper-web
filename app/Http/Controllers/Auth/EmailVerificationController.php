@@ -38,8 +38,8 @@ class EmailVerificationController extends Controller
         }
 
         if ($user->verifyEmailWithCode($request->code)) {
-            return redirect()->route('pageHome')
-                ->with('success', 'Email berhasil diverifikasi! Selamat datang, ' . $user->nickname . ' ' . $user->name . '!');
+            return redirect()->route('anak.create')
+                ->with('message', 'Email berhasil diverifikasi! Sekarang tambahkan data anak Anda.');
         }
 
         return back()->withErrors([
