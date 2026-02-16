@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AnakController extends Controller
 {
-    public function create()
+    public function index()
     {
         $user = Auth::user();
 
@@ -19,7 +19,31 @@ class AnakController extends Controller
 
         $anaks = $user->anaks()->latest()->get();
 
-        return view('auth.data-anak', compact('anaks'));
+        return view('anak.index', compact('anaks'));
+    }
+
+    public function setup()
+    {
+        $user = Auth::user();
+
+        if (! $user->isPelanggan()) {
+            return redirect()->route('pageHome');
+        }
+
+        $anaks = $user->anaks()->latest()->get();
+
+        return view('anak.setup', compact('anaks'));
+    }
+
+    public function create()
+    {
+        $user = Auth::user();
+
+        if (! $user->isPelanggan()) {
+            return redirect()->route('pageHome');
+        }
+
+        return view('anak.form');
     }
 
     public function store(Request $request)
@@ -37,8 +61,42 @@ class AnakController extends Controller
 
         Auth::user()->anaks()->create($validated);
 
-        return redirect()->route('anak.create')
+        $redirect = $request->input('_from') === 'setup' ? 'anak.setup' : 'anak.index';
+
+        return redirect()->route($redirect)
             ->with('message', 'Data anak berhasil ditambahkan!');
+    }
+
+    public function edit(Anak $anak)
+    {
+        if ($anak->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        return view('anak.form', compact('anak'));
+    }
+
+    public function update(Request $request, Anak $anak)
+    {
+        if ($anak->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'tanggal_lahir' => ['required', 'date', 'before:today'],
+            'jenis_kelamin' => ['required', 'in:L,P'],
+        ], [
+            'nama.required' => 'Nama anak wajib diisi.',
+            'tanggal_lahir.required' => 'Tanggal lahir wajib diisi.',
+            'tanggal_lahir.before' => 'Tanggal lahir harus sebelum hari ini.',
+            'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
+        ]);
+
+        $anak->update($validated);
+
+        return redirect()->route('anak.index')
+            ->with('message', 'Data anak berhasil diperbarui!');
     }
 
     public function destroy(Anak $anak)
@@ -49,7 +107,7 @@ class AnakController extends Controller
 
         $anak->delete();
 
-        return redirect()->route('anak.create')
+        return redirect()->route('anak.index')
             ->with('message', 'Data anak berhasil dihapus.');
     }
 
@@ -58,7 +116,7 @@ class AnakController extends Controller
         $user = Auth::user();
 
         if ($user->anaks()->count() === 0) {
-            return redirect()->route('anak.create')
+            return redirect()->route('anak.setup')
                 ->withErrors(['anak' => 'Tambahkan minimal 1 data anak terlebih dahulu.']);
         }
 

@@ -40,7 +40,7 @@ class LoginController extends Controller
             }
 
             if ($user->needsChildData()) {
-                return redirect()->route('anak.create');
+                return redirect()->route('anak.setup');
             }
 
             return redirect()->intended(route('pageHome'));

@@ -45,13 +45,60 @@
                         Tentang
                     </a>
 
-                    {{-- Login Link --}}
-                    <a href="/login" class="inline-flex items-center gap-2 text-gray-600 hover:text-biper-blue font-medium transition-colors group">
-                        <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-biper-blue-light transition-colors">
-                            <i class="fas fa-user text-sm"></i>
+                    @auth
+                        {{-- User Avatar Dropdown --}}
+                        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                            <button @click="open = !open" class="flex items-center gap-2 group">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-r from-biper-pink to-biper-blue flex items-center justify-center text-white text-sm font-bold shadow-md group-hover:shadow-lg transition-shadow">
+                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                </div>
+                                <span class="text-sm font-medium text-gray-700 group-hover:text-biper-pink transition hidden lg:inline">
+                                    {{ auth()->user()->nickname ?? '' }} {{ Str::words(auth()->user()->name, 1, '') }}
+                                </span>
+                                <i class="fas fa-chevron-down text-[10px] text-gray-400 transition-transform" :class="open && 'rotate-180'"></i>
+                            </button>
+
+                            {{-- Dropdown --}}
+                            <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+                                 class="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50">
+
+                                {{-- User Info --}}
+                                <div class="px-4 py-3 border-b border-gray-100">
+                                    <p class="text-sm font-bold text-gray-800">{{ auth()->user()->nickname }} {{ auth()->user()->name }}</p>
+                                    <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                                </div>
+
+                                <div class="py-1">
+                                    <a href="{{ route('anak.index') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-biper-pink-light/30 hover:text-biper-pink transition">
+                                        <i class="fas fa-baby w-4 text-center"></i>
+                                        Data Anak
+                                    </a>
+                                    <a href="{{ route('pageBooking') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-600 hover:bg-biper-pink-light/30 hover:text-biper-pink transition">
+                                        <i class="fas fa-calendar-check w-4 text-center"></i>
+                                        Booking Saya
+                                    </a>
+                                </div>
+
+                                <div class="border-t border-gray-100 pt-1">
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition">
+                                            <i class="fas fa-sign-out-alt w-4 text-center"></i>
+                                            Keluar
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
-                        <span class="text-sm">Masuk</span>
-                    </a>
+                    @else
+                        {{-- Login Link --}}
+                        <a href="/login" class="inline-flex items-center gap-2 text-gray-600 hover:text-biper-blue font-medium transition-colors group">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-biper-blue-light transition-colors">
+                                <i class="fas fa-user text-sm"></i>
+                            </div>
+                            <span class="text-sm">Masuk</span>
+                        </a>
+                    @endauth
 
                     {{-- Booking Online Button --}}
                     <a href="{{ route('pageBooking') }}" class="bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white px-6 py-2.5 rounded-full font-semibold shadow-lg shadow-biper-pink/30 hover:shadow-biper-pink/50 hover:-translate-y-0.5 transition-all duration-300 inline-flex items-center gap-2">

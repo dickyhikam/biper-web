@@ -36,12 +36,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/resend', [EmailVerificationController::class, 'resend'])->name('verification.resend');
 });
 
-// Data anak routes (setelah verifikasi email)
+// Data anak routes
 Route::middleware('auth')->group(function () {
-    Route::get('/data-anak', [AnakController::class, 'create'])->name('anak.create');
+    Route::get('/data-anak', [AnakController::class, 'index'])->name('anak.index');
+    Route::get('/data-anak/setup', [AnakController::class, 'setup'])->name('anak.setup');
+    Route::get('/data-anak/tambah', [AnakController::class, 'create'])->name('anak.create');
     Route::post('/data-anak', [AnakController::class, 'store'])->name('anak.store');
-    Route::post('/data-anak/complete', [AnakController::class, 'complete'])->name('anak.complete');
+    Route::get('/data-anak/{anak}/edit', [AnakController::class, 'edit'])->name('anak.edit');
+    Route::put('/data-anak/{anak}', [AnakController::class, 'update'])->name('anak.update');
     Route::delete('/data-anak/{anak}', [AnakController::class, 'destroy'])->name('anak.destroy');
+    Route::post('/data-anak/complete', [AnakController::class, 'complete'])->name('anak.complete');
 });
 
 Route::get('/forgot-password', function () {

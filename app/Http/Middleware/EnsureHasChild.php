@@ -13,7 +13,7 @@ class EnsureHasChild
         $user = $request->user();
 
         if ($user && $user->needsChildData()) {
-            return redirect()->route('anak.create');
+            return redirect()->route('anak.setup');
         }
 
         return $next($request);

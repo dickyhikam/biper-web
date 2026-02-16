@@ -38,7 +38,7 @@ class EmailVerificationController extends Controller
         }
 
         if ($user->verifyEmailWithCode($request->code)) {
-            return redirect()->route('anak.create')
+            return redirect()->route('anak.setup')
                 ->with('message', 'Email berhasil diverifikasi! Sekarang tambahkan data anak Anda.');
         }
 
