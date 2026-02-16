@@ -46,14 +46,25 @@
                 </div>
 
                 {{-- Profile Dropdown --}}
+                @php
+                    $userName = auth()->user()->name ?? 'Admin';
+                    $nameParts = explode(' ', $userName);
+                    $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : '');
+                @endphp
                 <button data-dropdown-toggle="dropdownProfile" class="flex justify-center items-center rounded-full" type="button">
-                    <img src="{{ asset('assets/images/user.png') }}" alt="image" class="w-10 h-10 object-fit-cover rounded-full">
+                    @if (!empty(auth()->user()->profile_photo_path))
+                        <img src="{{ asset('storage/' . auth()->user()->profile_photo_path) }}" alt="{{ $userName }}" class="w-10 h-10 object-cover rounded-full">
+                    @else
+                        <span class="w-10 h-10 bg-primary-600 text-white rounded-full flex justify-center items-center font-semibold text-sm">
+                            {{ $initials }}
+                        </span>
+                    @endif
                 </button>
                 <div id="dropdownProfile" class="z-10 hidden bg-white dark:bg-neutral-700 rounded-lg shadow-lg dropdown-menu-sm p-3">
                     <div class="py-3 px-4 rounded-lg bg-primary-50 dark:bg-primary-600/25 mb-4 flex items-center justify-between gap-2">
                         <div>
-                            <h6 class="text-lg text-neutral-900 font-semibold mb-0">Admin</h6>
-                            <span class="text-neutral-500">Administrator</span>
+                            <h6 class="text-lg text-neutral-900 font-semibold mb-0">{{ auth()->user()->name ?? 'Admin' }}</h6>
+                            <span class="text-neutral-500">{{ auth()->user()->role_label ?? 'Administrator' }}</span>
                         </div>
                         <button type="button" class="hover:text-danger-600">
                             <iconify-icon icon="radix-icons:cross-1" class="icon text-xl"></iconify-icon>
@@ -72,9 +83,12 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="text-black px-0 py-2 hover:text-danger-600 flex items-center gap-4" href="{{ route('pageHome') }}">
-                                    <iconify-icon icon="lucide:power" class="icon text-xl"></iconify-icon> Keluar
-                                </a>
+                                <form action="{{ route('admin.logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="text-black px-0 py-2 hover:text-danger-600 flex items-center gap-4 w-full">
+                                        <iconify-icon icon="lucide:power" class="icon text-xl"></iconify-icon> Keluar
+                                    </button>
+                                </form>
                             </li>
                         </ul>
                     </div>

@@ -4,9 +4,9 @@
     </button>
     <div>
         <a href="{{ route('admin.dashboard') }}" class="sidebar-logo">
-            <img src="{{ asset('assets/images/logo.png') }}" alt="Biper" class="light-logo">
-            <img src="{{ asset('assets/images/logo-light.png') }}" alt="Biper" class="dark-logo">
-            <img src="{{ asset('assets/images/logo-icon.png') }}" alt="Biper" class="logo-icon">
+            <img src="{{ asset('images/logo-text.png') }}" alt="Biper" class="light-logo">
+            <img src="{{ asset('images/logo-text.png') }}" alt="Biper" class="dark-logo">
+            <img src="{{ asset('images/logo.png') }}" alt="Biper" class="logo-icon">
         </a>
     </div>
     <div class="sidebar-menu-area">
@@ -68,6 +68,17 @@
             </li>
 
             <li class="sidebar-menu-group-title">Pengaturan</li>
+
+            @auth
+                @if (auth()->user()->canViewUsers())
+                    <li>
+                        <a href="{{ route('admin.users.index') }}" class="{{ request()->routeIs('admin.users.*') ? 'active-page' : '' }}">
+                            <iconify-icon icon="solar:users-group-rounded-outline" class="menu-icon"></iconify-icon>
+                            <span>Manajemen User</span>
+                        </a>
+                    </li>
+                @endif
+            @endauth
 
             <li>
                 <a href="javascript:void(0)">

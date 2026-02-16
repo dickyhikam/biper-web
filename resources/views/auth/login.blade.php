@@ -28,8 +28,17 @@
                     <span>Akun berhasil dibuat! Silakan login.</span>
                 </div>
 
+                {{-- Error Message --}}
+                @if ($errors->any())
+                    <div class="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm flex items-start gap-3">
+                        <i class="fas fa-exclamation-circle text-lg mt-0.5"></i>
+                        <span>{{ $errors->first() }}</span>
+                    </div>
+                @endif
+
                 {{-- Login Form --}}
-                <form action="#" method="POST" class="space-y-6">
+                <form action="{{ route('login') }}" method="POST" class="space-y-6">
+                    @csrf
 
                     {{-- Email/Phone Input --}}
                     <div>
@@ -40,6 +49,7 @@
                             type="text"
                             id="login"
                             name="login"
+                            value="{{ old('login') }}"
                             class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
                             placeholder="bunda@email.com atau 081234567890"
                             required

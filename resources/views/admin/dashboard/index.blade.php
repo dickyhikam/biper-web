@@ -359,7 +359,7 @@
             toolbar: { show: false },
             fontFamily: 'Inter, sans-serif',
         },
-        colors: ['#487FFF'],
+        colors: ['#df1995'],
         dataLabels: { enabled: false },
         stroke: { curve: 'smooth', width: 2 },
         fill: {
@@ -398,7 +398,7 @@
             type: 'donut',
             height: 260,
         },
-        colors: ['#487FFF', '#FF9F29', '#28A745', '#6F42C1'],
+        colors: ['#df1995', '#40d7e3', '#28A745', '#ffd93d'],
         labels: ['Baby Spa', 'Pijat Bayi', 'Baby Swim', 'Home Care'],
         legend: { show: false },
         plotOptions: {

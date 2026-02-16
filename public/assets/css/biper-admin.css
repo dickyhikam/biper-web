@@ -1,0 +1,257 @@
+/*
+ * Biper Admin - Color Override
+ * Override WowDash primary (blue #487FFF) → Biper Pink (#df1995)
+ */
+
+/* CSS Variables */
+:root {
+    --primary-50: #fdf2f8;
+    --primary-100: #fce7f3;
+    --primary-600: #df1995;
+}
+
+/* ========================
+   Background Colors
+   ======================== */
+.bg-primary-50 {
+    background-color: #fdf2f8 !important;
+}
+.bg-primary-100 {
+    background-color: #fce7f3 !important;
+}
+.bg-primary-200 {
+    background-color: #fbcfe8 !important;
+}
+.bg-primary-300 {
+    background-color: #f9a8d4 !important;
+}
+.bg-primary-400 {
+    background-color: #f472b6 !important;
+}
+.bg-primary-500 {
+    background-color: #ec4899 !important;
+}
+.bg-primary-600 {
+    background-color: #df1995 !important;
+}
+.\!bg-primary-600 {
+    background-color: #df1995 !important;
+}
+.bg-primary-600\/10 {
+    background-color: rgba(223, 25, 149, 0.1) !important;
+}
+.bg-primary-600\/20 {
+    background-color: rgba(223, 25, 149, 0.2) !important;
+}
+.bg-primary-600\/25 {
+    background-color: rgba(223, 25, 149, 0.25) !important;
+}
+
+/* ========================
+   Text Colors
+   ======================== */
+.text-primary-400 {
+    color: #f472b6 !important;
+}
+.text-primary-500 {
+    color: #ec4899 !important;
+}
+.text-primary-600 {
+    color: #df1995 !important;
+}
+
+/* ========================
+   Border Colors
+   ======================== */
+.border-primary-50 {
+    border-color: #fdf2f8 !important;
+}
+.border-primary-400 {
+    border-color: #f472b6 !important;
+}
+.border-primary-600 {
+    border-color: #df1995 !important;
+}
+
+/* ========================
+   Gradient (from/to)
+   ======================== */
+.from-primary-500 {
+    --tw-gradient-from: #ec4899;
+}
+.from-primary-600\/10 {
+    --tw-gradient-from: rgba(223, 25, 149, 0.1);
+}
+.to-primary-400 {
+    --tw-gradient-to: #f472b6;
+}
+.to-primary-600\/50 {
+    --tw-gradient-to: rgba(223, 25, 149, 0.5);
+}
+
+/* ========================
+   Hover States
+   ======================== */
+.hover\:bg-primary-50:hover {
+    background-color: #fdf2f8 !important;
+}
+.hover\:bg-primary-600:hover {
+    background-color: #df1995 !important;
+}
+.hover\:bg-primary-600\/20:hover {
+    background-color: rgba(223, 25, 149, 0.2) !important;
+}
+.hover\:bg-primary-700:hover {
+    background-color: #b9127b !important;
+}
+.hover\:border-primary-600:hover {
+    border-color: #df1995 !important;
+}
+.hover\:text-primary-600:hover {
+    color: #df1995 !important;
+}
+.hover-text-primary:hover {
+    color: #b9127b !important;
+}
+
+/* ========================
+   Focus States
+   ======================== */
+.focus\:bg-primary-600:focus {
+    background-color: #df1995 !important;
+}
+.focus\:ring-primary-500:focus {
+    --tw-ring-color: #ec4899 !important;
+}
+.focus\:ring-primary-600:focus {
+    --tw-ring-color: #df1995 !important;
+}
+
+/* ========================
+   Group Hover
+   ======================== */
+.group:hover .group-hover\:bg-primary-600 {
+    background-color: #df1995 !important;
+}
+.group:hover .group-hover\:text-primary-600 {
+    color: #df1995 !important;
+}
+
+/* ========================
+   Peer Checked
+   ======================== */
+.peer:checked ~ .peer-checked\:border-primary-600 {
+    border-color: #df1995 !important;
+}
+.peer:checked ~ .peer-checked\:bg-primary-600 {
+    background-color: #df1995 !important;
+}
+.peer:checked ~ .peer-checked\:text-primary-600 {
+    color: #df1995 !important;
+}
+
+/* ========================
+   Dark Mode
+   ======================== */
+:is(.dark .dark\:border-primary-600) {
+    border-color: #df1995 !important;
+}
+:is(.dark .dark\:border-primary-600\/50) {
+    border-color: rgba(223, 25, 149, 0.5) !important;
+}
+:is(.dark .dark\:\!bg-primary-600) {
+    background-color: #df1995 !important;
+}
+:is(.dark .dark\:bg-primary-100) {
+    background-color: #fce7f3 !important;
+}
+:is(.dark .dark\:bg-primary-600) {
+    background-color: #df1995 !important;
+}
+:is(.dark .dark\:bg-primary-600\/10) {
+    background-color: rgba(223, 25, 149, 0.1) !important;
+}
+:is(.dark .dark\:bg-primary-600\/20) {
+    background-color: rgba(223, 25, 149, 0.2) !important;
+}
+:is(.dark .dark\:bg-primary-600\/25) {
+    background-color: rgba(223, 25, 149, 0.25) !important;
+}
+:is(.dark .dark\:text-primary-400) {
+    color: #f472b6 !important;
+}
+:is(.dark .dark\:text-primary-500) {
+    color: #ec4899 !important;
+}
+:is(.dark .dark\:text-primary-600) {
+    color: #df1995 !important;
+}
+:is(.dark .dark\:hover\:border-primary-600:hover) {
+    border-color: #df1995 !important;
+}
+:is(.dark .dark\:hover\:bg-primary-600:hover) {
+    background-color: #df1995 !important;
+}
+:is(.dark .dark\:hover\:text-primary-600:hover) {
+    color: #df1995 !important;
+}
+:is(.dark .dark\:focus\:ring-primary-600:focus) {
+    --tw-ring-color: #df1995 !important;
+}
+
+/* ========================
+   Buttons
+   ======================== */
+.btn-primary-600,
+.btn-primary {
+    background-color: #df1995 !important;
+    color: #fff !important;
+}
+.btn-primary-600:hover,
+.btn-primary:hover {
+    background-color: #b9127b !important;
+}
+.btn-outline-primary,
+.btn-outline-primary-600 {
+    border-color: #df1995 !important;
+    color: #df1995 !important;
+}
+.btn-outline-primary:hover,
+.btn-outline-primary-600:hover {
+    background-color: #df1995 !important;
+    color: #fff !important;
+}
+
+/* ========================
+   Sidebar Active
+   ======================== */
+.sidebar-menu li > a.active-page {
+    background-color: #df1995 !important;
+    color: #fff !important;
+}
+.sidebar-menu li > a.active-page:hover {
+    color: #fff !important;
+}
+.sidebar-menu .sidebar-submenu li.active-page a {
+    background-color: #fdf2f8 !important;
+    color: #df1995 !important;
+}
+
+/* ========================
+   Dropdown Show
+   ======================== */
+.dropdown > button.show {
+    background-color: #fdf2f8;
+    color: #df1995 !important;
+}
+.dropdown > button.show .text-primary-light {
+    color: #df1995 !important;
+}
+
+/* ========================
+   Form Check (Checkbox) - pink accent
+   ======================== */
+.form-check-input:checked {
+    background-color: #df1995;
+    border-color: #df1995;
+}
