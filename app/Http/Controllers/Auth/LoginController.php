@@ -35,15 +35,13 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
-            if ($user->needsEmailVerification()) {
-                return redirect()->route('verification.notice');
-            }
-
             if ($user->needsChildData()) {
                 return redirect()->route('anak.setup');
             }
 
-            return redirect()->intended(route('pageHome'));
+            $redirect = $request->input('redirect');
+
+            return redirect()->intended($redirect ?: route('pageHome'));
         }
 
         return back()->withErrors([

@@ -27,12 +27,13 @@
             selectedDate: '',
             selectedTime: '',
             isLoggedIn: {{ auth()->check() ? 'true' : 'false' }},
-            bookingMode: 'guest', // 'guest' or 'user'
             selectedChild: null,
-            savedChildren: [
-                { id: 1, name: 'Muhammad Arkan', age: 6, mother: 'Sarah Amanda', phone: '081234567890' },
-                { id: 2, name: 'Zahra Amelia', age: 12, mother: 'Sarah Amanda', phone: '081234567890' }
-            ],
+            savedChildren: {{ Js::from($anaks->map(fn($a) => [
+                'id' => $a->id,
+                'nama' => $a->nama,
+                'usia_bulan' => $a->usia_bulan,
+                'jenis_kelamin' => $a->jenis_kelamin,
+            ])->values()) }},
             services: [
                 { id: 1, name: 'Biper Complete Spa', price: '150K', duration: '60 Menit', icon: 'fa-spa', color: 'biper-pink', desc: 'Baby Gym + Hydrotherapy + Massage' },
                 { id: 2, name: 'Pediatric Massage', price: '120K', duration: '45 Menit', icon: 'fa-hands', color: 'biper-blue', desc: 'Pijat terapi khusus batuk pilek & kolik' },
@@ -42,26 +43,61 @@
                 { id: 6, name: 'Postpartum Massage', price: '200K', duration: '60 Menit', icon: 'fa-spa', color: 'biper-pink', desc: 'Pijat nifas pasca melahirkan' }
             ],
             init() {
-                // Read URL parameter for auto-select service
+                // Restore booking draft from localStorage
+                this._restoreFromStorage();
+
+                // Read URL parameter for auto-select service (overrides localStorage)
                 const urlParams = new URLSearchParams(window.location.search);
                 const serviceId = urlParams.get('service');
-
                 if (serviceId) {
                     const service = this.services.find(s => s.id == serviceId);
                     if (service) {
                         this.selectedService = service;
-                        this.step = 2; // Auto skip to step 2 (pilih jadwal)
+                        this.step = 2;
                     }
                 }
+
+                // Auto-save on changes
+                this.$watch('selectedService', () => this._saveToStorage());
+                this.$watch('selectedDate', () => this._saveToStorage());
+                this.$watch('selectedTime', () => this._saveToStorage());
+                this.$watch('step', () => this._saveToStorage());
+                this.$watch('notes', () => this._saveToStorage());
+            },
+            _saveToStorage() {
+                localStorage.setItem('biperBookingDraft', JSON.stringify({
+                    serviceId: this.selectedService?.id || null,
+                    selectedDate: this.selectedDate,
+                    selectedTime: this.selectedTime,
+                    step: this.step,
+                    notes: this.notes,
+                    savedAt: Date.now()
+                }));
+            },
+            _restoreFromStorage() {
+                try {
+                    var draft = JSON.parse(localStorage.getItem('biperBookingDraft'));
+                    if (!draft) return;
+                    // Expire after 24 hours
+                    if (draft.savedAt && Date.now() - draft.savedAt > 86400000) {
+                        localStorage.removeItem('biperBookingDraft');
+                        return;
+                    }
+                    if (draft.serviceId) {
+                        var svc = this.services.find(s => s.id === draft.serviceId);
+                        if (svc) this.selectedService = svc;
+                    }
+                    if (draft.selectedDate) this.selectedDate = draft.selectedDate;
+                    if (draft.selectedTime) this.selectedTime = draft.selectedTime;
+                    if (draft.notes) this.notes = draft.notes;
+                    if (draft.step && draft.step > 1) this.step = draft.step;
+                } catch (e) {}
+            },
+            _clearStorage() {
+                localStorage.removeItem('biperBookingDraft');
             },
             timeSlots: ['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '15:00', '16:00'],
-            formData: {
-                babyName: '',
-                babyAge: '',
-                motherName: '',
-                phone: '',
-                notes: ''
-            },
+            notes: '',
             // Calendar Data
             currentMonth: new Date().getMonth(),
             currentYear: new Date().getFullYear(),
@@ -135,10 +171,6 @@
             },
             selectChild(child) {
                 this.selectedChild = child;
-                this.formData.babyName = child.name;
-                this.formData.babyAge = child.age;
-                this.formData.motherName = child.mother;
-                this.formData.phone = child.phone;
             }
         }">
 
@@ -318,37 +350,36 @@
                 <div class="text-center mb-8">
                     <h2 class="font-display font-bold text-2xl text-gray-800 mb-2">
                         <span x-show="isLoggedIn">Pilih Data Anak</span>
-                        <span x-show="!isLoggedIn">Lengkapi Data</span>
+                        <span x-show="!isLoggedIn">Login Terlebih Dahulu</span>
                     </h2>
                     <p class="text-gray-500" x-show="isLoggedIn">Pilih anak yang akan di-treatment oleh terapis kami</p>
-                    <p class="text-gray-500" x-show="!isLoggedIn">Login untuk booking lebih cepat atau lanjutkan sebagai guest</p>
+                    <p class="text-gray-500" x-show="!isLoggedIn">Silakan login atau daftar untuk melanjutkan booking</p>
                 </div>
 
-                {{-- If NOT Logged In: Show Login/Guest Options --}}
-                <div x-show="!isLoggedIn && bookingMode === 'guest'" class="space-y-6">
-                    {{-- Login Prompt --}}
+                {{-- If NOT Logged In: Show Login/Register Only --}}
+                <div x-show="!isLoggedIn" class="space-y-6">
                     <div class="bg-gradient-to-br from-biper-blue-light to-biper-pink-light border-2 border-biper-blue/30 rounded-[2rem] p-8 text-center">
                         <div class="w-20 h-20 bg-gradient-to-r from-biper-blue to-biper-pink rounded-full flex items-center justify-center text-white text-3xl mx-auto mb-4 shadow-xl">
                             <i class="fas fa-user-circle"></i>
                         </div>
-                        <h3 class="font-bold text-xl text-gray-800 mb-2 font-display">Sudah Punya Akun?</h3>
-                        <p class="text-gray-600 mb-6 max-w-md mx-auto">Login untuk booking lebih cepat dengan data tersimpan, tracking riwayat, dan dapatkan poin reward!</p>
+                        <h3 class="font-bold text-xl text-gray-800 mb-2 font-display">Masuk untuk Booking</h3>
+                        <p class="text-gray-600 mb-6 max-w-md mx-auto">Login atau buat akun untuk melanjutkan booking. Data Bunda & si kecil akan tersimpan aman.</p>
 
                         <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                            <a href="/login" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                            <a href="{{ route('login', ['redirect' => '/booking']) }}" class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white px-8 py-3.5 rounded-full font-bold shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                                 <i class="fas fa-sign-in-alt"></i>
-                                Login / Register
+                                Login
                             </a>
-                            <button @click="bookingMode = 'manual'" class="inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-bold hover:border-biper-blue hover:text-biper-blue transition-all duration-300">
-                                <i class="fas fa-edit"></i>
-                                Lanjut sebagai Guest
-                            </button>
+                            <a href="{{ route('register') }}" class="inline-flex items-center justify-center gap-2 bg-white border-2 border-biper-pink text-biper-pink px-8 py-3.5 rounded-full font-bold hover:bg-biper-pink-light/30 transition-all duration-300">
+                                <i class="fas fa-user-plus"></i>
+                                Daftar Akun Baru
+                            </a>
                         </div>
 
                         <div class="mt-6 flex items-center justify-center gap-4 text-xs text-gray-500">
                             <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Data Tersimpan</span>
                             <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Booking Cepat</span>
-                            <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Poin Reward</span>
+                            <span class="flex items-center gap-1"><i class="fas fa-check-circle text-green-500"></i> Riwayat Booking</span>
                         </div>
                     </div>
                 </div>
@@ -363,15 +394,15 @@
                                 <div class="flex items-start gap-4">
                                     <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shadow-md transition-transform group-hover:scale-110"
                                          :class="selectedChild?.id === child.id ? 'bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white' : 'bg-gray-100 text-gray-400'">
-                                        <i class="fas fa-baby"></i>
+                                        <i :class="child.jenis_kelamin === 'L' ? 'fas fa-mars' : 'fas fa-venus'"></i>
                                     </div>
                                     <div class="flex-1">
-                                        <h3 class="font-bold text-lg text-gray-800 mb-1 font-display" x-text="child.name"></h3>
+                                        <h3 class="font-bold text-lg text-gray-800 mb-1 font-display" x-text="child.nama"></h3>
                                         <p class="text-sm text-gray-500 mb-2">
-                                            <i class="far fa-calendar-alt mr-1"></i><span x-text="child.age + ' bulan'"></span>
+                                            <i class="far fa-calendar-alt mr-1"></i><span x-text="child.usia_bulan + ' bulan'"></span>
                                         </p>
                                         <p class="text-xs text-gray-400">
-                                            <i class="fas fa-user mr-1"></i><span x-text="'Ibu: ' + child.mother"></span>
+                                            <i class="fas fa-child mr-1"></i><span x-text="child.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></span>
                                         </p>
                                     </div>
                                     <div class="flex items-center justify-center w-6 h-6 rounded-full border-2 transition-colors"
@@ -383,78 +414,36 @@
                         </template>
 
                         {{-- Add New Child Card --}}
-                        <div @click="bookingMode = 'manual'; selectedChild = null; formData = { babyName: '', babyAge: '', motherName: '', phone: '', notes: '' }"
-                             class="group cursor-pointer bg-gradient-to-br from-gray-50 to-white border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:border-biper-blue hover:bg-biper-blue-light/20 transition-all duration-300 flex items-center justify-center text-center">
+                        <a href="{{ route('anak.create', ['from' => 'booking']) }}"
+                           class="group bg-gradient-to-br from-gray-50 to-white border-2 border-dashed border-gray-300 rounded-2xl p-6 hover:border-biper-blue hover:bg-biper-blue-light/20 transition-all duration-300 flex items-center justify-center text-center no-underline">
                             <div>
                                 <div class="w-16 h-16 bg-gray-100 group-hover:bg-biper-blue-light rounded-2xl flex items-center justify-center text-3xl text-gray-400 group-hover:text-biper-blue mx-auto mb-3 transition-all">
                                     <i class="fas fa-plus"></i>
                                 </div>
                                 <h3 class="font-bold text-gray-600 group-hover:text-biper-blue transition-colors">Tambah Anak Baru</h3>
-                                <p class="text-xs text-gray-400 mt-1">Isi data manual</p>
+                                <p class="text-xs text-gray-400 mt-1">Tambah data anak lainnya</p>
                             </div>
-                        </div>
+                        </a>
                     </div>
 
-                    {{-- Notes for logged in users --}}
+                    {{-- Notes --}}
                     <div x-show="selectedChild" class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                         <label class="block text-sm font-bold text-gray-700 mb-2">Catatan Khusus (Opsional)</label>
-                        <textarea x-model="formData.notes" rows="3"
+                        <textarea x-model="notes" rows="3"
                                   class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition resize-none"
                                   placeholder="Contoh: Anak saya alergi parfum, mohon gunakan produk tanpa pewangi"></textarea>
                     </div>
                 </div>
 
-                {{-- Manual Form (Guest Mode or Adding New Child) --}}
-                <div x-show="(!isLoggedIn && bookingMode === 'manual') || (isLoggedIn && bookingMode === 'manual')" class="space-y-6">
-                    <div class="bg-white border border-gray-100 rounded-[2rem] p-8 shadow-lg space-y-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Bayi/Anak *</label>
-                                <input type="text" x-model="formData.babyName"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
-                                       placeholder="Contoh: Muhammad Arkan">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Usia (Bulan) *</label>
-                                <input type="number" x-model="formData.babyAge"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
-                                       placeholder="Contoh: 6">
-                            </div>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">Nama Ibu/Bunda *</label>
-                                <input type="text" x-model="formData.motherName"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
-                                       placeholder="Contoh: Sarah Amanda">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold text-gray-700 mb-2">No. WhatsApp *</label>
-                                <input type="tel" x-model="formData.phone"
-                                       class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition"
-                                       placeholder="08123456789">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-2">Catatan Khusus (Opsional)</label>
-                            <textarea x-model="formData.notes" rows="3"
-                                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-biper-pink focus:outline-none transition resize-none"
-                                      placeholder="Contoh: Anak saya alergi parfum, mohon gunakan produk tanpa pewangi"></textarea>
-                        </div>
-                    </div>
-                </div>
-
                 {{-- Navigation Buttons --}}
                 <div class="flex gap-4">
-                    <button @click="prevStep(); bookingMode = 'guest'; selectedChild = null;"
+                    <button @click="prevStep(); selectedChild = null;"
                             class="px-6 py-3 border-2 border-gray-200 text-gray-600 font-bold rounded-full hover:border-biper-blue hover:text-biper-blue transition">
                         <i class="fas fa-arrow-left mr-2"></i>Kembali
                     </button>
                     <button @click="nextStep()"
-                            :disabled="(!isLoggedIn && bookingMode === 'guest') || ((bookingMode === 'manual' || !isLoggedIn) && (!formData.babyName || !formData.babyAge || !formData.motherName || !formData.phone)) || (isLoggedIn && bookingMode !== 'manual' && !selectedChild)"
-                            :class="(isLoggedIn && selectedChild) || (bookingMode === 'manual' && formData.babyName && formData.babyAge && formData.motherName && formData.phone)
+                            :disabled="!isLoggedIn || !selectedChild"
+                            :class="isLoggedIn && selectedChild
                                 ? 'bg-gradient-to-r from-biper-pink to-biper-pink-dark text-white shadow-lg hover:shadow-xl'
                                 : 'bg-gray-300 text-gray-500 cursor-not-allowed'"
                             class="flex-1 px-6 py-3 font-bold rounded-full transition">
@@ -497,8 +486,8 @@
                             <i class="fas fa-baby text-purple-600 text-2xl mt-1"></i>
                             <div class="flex-1">
                                 <p class="text-sm text-gray-500">Data Pasien</p>
-                                <p class="font-bold text-lg text-gray-800" x-text="(selectedChild ? selectedChild.name : formData.babyName) + ' (' + (selectedChild ? selectedChild.age : formData.babyAge) + ' bulan)'"></p>
-                                <p class="text-gray-600" x-text="'Ibu: ' + (selectedChild ? selectedChild.mother : formData.motherName)"></p>
+                                <p class="font-bold text-lg text-gray-800" x-text="selectedChild?.nama + ' (' + selectedChild?.usia_bulan + ' bulan)'"></p>
+                                <p class="text-gray-600" x-text="selectedChild?.jenis_kelamin === 'L' ? 'Laki-laki' : 'Perempuan'"></p>
                             </div>
                         </div>
 
@@ -506,15 +495,16 @@
                             <i class="fab fa-whatsapp text-green-600 text-2xl mt-1"></i>
                             <div class="flex-1">
                                 <p class="text-sm text-gray-500">Kontak</p>
-                                <p class="font-bold text-lg text-gray-800" x-text="selectedChild ? selectedChild.phone : formData.phone"></p>
+                                <p class="font-bold text-lg text-gray-800">{{ $user?->nickname }} {{ $user?->name }}</p>
+                                <p class="text-gray-600">{{ $user?->phone }}</p>
                             </div>
                         </div>
 
-                        <div x-show="formData.notes" class="flex items-start gap-4">
+                        <div x-show="notes" class="flex items-start gap-4">
                             <i class="fas fa-sticky-note text-biper-yellow text-2xl mt-1"></i>
                             <div class="flex-1">
                                 <p class="text-sm text-gray-500">Catatan Khusus</p>
-                                <p class="text-gray-800" x-text="formData.notes"></p>
+                                <p class="text-gray-800" x-text="notes"></p>
                             </div>
                         </div>
                     </div>

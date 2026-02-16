@@ -61,7 +61,12 @@ class AnakController extends Controller
 
         Auth::user()->anaks()->create($validated);
 
-        $redirect = $request->input('_from') === 'setup' ? 'anak.setup' : 'anak.index';
+        $from = $request->input('_from');
+        $redirect = match ($from) {
+            'setup' => 'anak.setup',
+            'booking' => 'pageBooking',
+            default => 'anak.index',
+        };
 
         return redirect()->route($redirect)
             ->with('message', 'Data anak berhasil ditambahkan!');

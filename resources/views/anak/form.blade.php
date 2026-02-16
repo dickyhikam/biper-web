@@ -41,6 +41,9 @@
                     @if (isset($anak))
                         @method('PUT')
                     @endif
+                    @if (request('from'))
+                        <input type="hidden" name="_from" value="{{ request('from') }}">
+                    @endif
 
                     {{-- Nama Anak --}}
                     <div>
@@ -232,11 +235,11 @@
                 </form>
             </div>
 
-            {{-- Back to list --}}
+            {{-- Back --}}
             <div class="mt-6 text-center">
-                <a href="{{ route('anak.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-biper-pink transition">
+                <a href="{{ request('from') === 'booking' ? route('pageBooking') : route('anak.index') }}" class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-biper-pink transition">
                     <i class="fas fa-arrow-left"></i>
-                    Kembali ke Daftar Anak
+                    {{ request('from') === 'booking' ? 'Kembali ke Booking' : 'Kembali ke Daftar Anak' }}
                 </a>
             </div>
 
