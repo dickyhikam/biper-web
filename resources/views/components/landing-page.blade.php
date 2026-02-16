@@ -46,7 +46,7 @@
                     </a>
 
                     {{-- Login Link --}}
-                    <a href="#" class="inline-flex items-center gap-2 text-gray-600 hover:text-biper-blue font-medium transition-colors group">
+                    <a href="/login" class="inline-flex items-center gap-2 text-gray-600 hover:text-biper-blue font-medium transition-colors group">
                         <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-biper-blue-light transition-colors">
                             <i class="fas fa-user text-sm"></i>
                         </div>
