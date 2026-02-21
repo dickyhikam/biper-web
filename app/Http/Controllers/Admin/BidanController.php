@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeUserMail;
 use App\Models\Bidan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BidanController extends Controller
 {
@@ -70,24 +73,26 @@ class BidanController extends Controller
 
         if ($isNewAccount) {
             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email'];
-            $rules['password'] = ['required', 'string', 'min:8'];
         } else {
             $rules['user_id'] = ['required', 'exists:users,id', 'unique:bidans,user_id'];
         }
 
         $validated = $request->validate($rules);
 
-        DB::transaction(function () use ($request, $validated, $isNewAccount) {
+        $newUser = null;
+
+        DB::transaction(function () use ($request, $validated, $isNewAccount, &$newUser) {
             if ($isNewAccount) {
                 $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'phone' => $validated['phone'] ?? null,
-                    'password' => Hash::make($validated['password']),
+                    'password' => Str::random(32),
                     'role' => User::ROLE_BIDAN_TERAPIS,
                 ]);
                 $validated['user_id'] = $user->id;
-                unset($validated['email'], $validated['password']);
+                $newUser = $user;
+                unset($validated['email']);
             } else {
                 $user = User::findOrFail($validated['user_id']);
                 $user->update([
@@ -120,9 +125,22 @@ class BidanController extends Controller
             Bidan::create($validated);
         });
 
+        if ($newUser) {
+            $token = Password::broker()->createToken($newUser);
+            $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $newUser->email]);
+
+            try {
+                Mail::to($newUser)->send(new WelcomeUserMail($newUser, $setPasswordUrl));
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.bidans.index')
+                    ->with('success', 'Data bidan/terapis berhasil ditambahkan, namun email gagal dikirim.');
+            }
+        }
+
         return redirect()
             ->route('admin.bidans.index')
-            ->with('success', 'Data bidan/terapis berhasil ditambahkan.');
+            ->with('success', 'Data bidan/terapis berhasil ditambahkan.' . ($newUser ? ' Email undangan telah dikirim ke ' . $newUser->email : ''));
     }
 
     public function show(Bidan $bidan)
@@ -168,30 +186,37 @@ class BidanController extends Controller
 
         if ($isNewAccount) {
             $rules['email'] = ['required', 'email', 'max:255', 'unique:users,email'];
-            $rules['password'] = ['required', 'string', 'min:8'];
         } else {
             $rules['user_id'] = ['required', 'exists:users,id', "unique:bidans,user_id,{$bidan->id}"];
+            $rules['password'] = ['nullable', 'confirmed', 'min:8'];
         }
 
         $validated = $request->validate($rules);
 
-        DB::transaction(function () use ($request, $validated, $isNewAccount, $bidan) {
+        $newUser = null;
+
+        DB::transaction(function () use ($request, $validated, $isNewAccount, $bidan, &$newUser) {
             if ($isNewAccount) {
                 $user = User::create([
                     'name' => $validated['name'],
                     'email' => $validated['email'],
                     'phone' => $validated['phone'] ?? null,
-                    'password' => Hash::make($validated['password']),
+                    'password' => Str::random(32),
                     'role' => User::ROLE_BIDAN_TERAPIS,
                 ]);
                 $validated['user_id'] = $user->id;
-                unset($validated['email'], $validated['password']);
+                $newUser = $user;
+                unset($validated['email']);
             } else {
                 $user = User::findOrFail($validated['user_id']);
-                $user->update([
+                $userData = [
                     'name' => $validated['name'],
                     'phone' => $validated['phone'] ?? $user->phone,
-                ]);
+                ];
+                if (!empty($validated['password'])) {
+                    $userData['password'] = $validated['password'];
+                }
+                $user->update($userData);
             }
 
             // Save photo/address/lat/lng to user
@@ -208,7 +233,7 @@ class BidanController extends Controller
             $user->update($userData);
 
             // Remove user-level fields from bidan data
-            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude']);
+            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude'], $validated['password']);
 
             if (isset($validated['schedule'])) {
                 $validated['schedule'] = array_filter($validated['schedule'], function ($day) {
@@ -221,17 +246,53 @@ class BidanController extends Controller
             $bidan->update($validated);
         });
 
+        if ($newUser) {
+            $token = Password::broker()->createToken($newUser);
+            $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $newUser->email]);
+
+            try {
+                Mail::to($newUser)->send(new WelcomeUserMail($newUser, $setPasswordUrl));
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.bidans.index')
+                    ->with('success', 'Data bidan/terapis berhasil diperbarui, namun email gagal dikirim.');
+            }
+        }
+
         return redirect()
             ->route('admin.bidans.index')
-            ->with('success', 'Data bidan/terapis berhasil diperbarui.');
+            ->with('success', 'Data bidan/terapis berhasil diperbarui.' . ($newUser ? ' Email undangan telah dikirim ke ' . $newUser->email : ''));
+    }
+
+    public function resendInvitation(Bidan $bidan)
+    {
+        $user = $bidan->user;
+
+        if ($user->email_verified_at) {
+            return response()->json(['message' => 'User sudah verifikasi email.'], 422);
+        }
+
+        Password::broker()->deleteToken($user);
+        $token = Password::broker()->createToken($user);
+        $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $user->email]);
+
+        try {
+            Mail::to($user)->send(new WelcomeUserMail($user, $setPasswordUrl));
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal mengirim email. Coba lagi nanti.'], 500);
+        }
+
+        return response()->json(['message' => 'Email undangan berhasil dikirim ulang ke ' . $user->email]);
     }
 
     public function destroy(Bidan $bidan)
     {
+        if ($bidan->user->photo) {
+            Storage::disk('public')->delete($bidan->user->photo);
+        }
+
         $bidan->delete();
 
-        return redirect()
-            ->route('admin.bidans.index')
-            ->with('success', 'Data bidan/terapis berhasil dihapus.');
+        return response()->json(['message' => 'Data bidan/terapis berhasil dihapus.']);
     }
 }

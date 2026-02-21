@@ -106,12 +106,19 @@
                     <td class="px-5 py-3 text-gray-600 dark:text-neutral-300">{{ $bidan->specialization }}</td>
                     <td class="px-5 py-3 text-gray-600 dark:text-neutral-300">{{ $bidan->user->phone ?? '-' }}</td>
                     <td class="px-5 py-3">
-                        @if ($bidan->is_active)
-                        <span class="bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-medium">
+                        @if (!$bidan->user->email_verified_at)
+                        <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:letter-unread-bold" class="text-sm"></iconify-icon>
+                            Belum Verifikasi
+                        </span>
+                        @elseif ($bidan->is_active)
+                        <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
                             Aktif
                         </span>
                         @else
-                        <span class="bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 px-3 py-1 rounded-full text-xs font-medium">
+                        <span class="inline-flex items-center gap-1 bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:close-circle-bold" class="text-sm"></iconify-icon>
                             Nonaktif
                         </span>
                         @endif
@@ -129,16 +136,20 @@
                                 title="Edit">
                                 <iconify-icon icon="solar:pen-outline" class="text-sm"></iconify-icon>
                             </a>
-                            <form action="{{ route('admin.bidans.destroy', $bidan) }}" method="POST"
-                                onsubmit="return confirm('Yakin ingin menghapus data bidan ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="w-8 h-8 bg-danger-100 dark:bg-danger-600/25 text-danger-600 rounded-full flex items-center justify-center hover:bg-danger-200 transition"
-                                    title="Hapus">
-                                    <iconify-icon icon="solar:trash-bin-trash-outline" class="text-sm"></iconify-icon>
-                                </button>
-                            </form>
+                            @if (!$bidan->user->email_verified_at)
+                            <button type="button"
+                                onclick="confirmResendInvitation({{ $bidan->id }}, '{{ addslashes($bidan->user->name) }}')"
+                                class="w-8 h-8 bg-success-100 dark:bg-success-600/25 text-success-600 rounded-full flex items-center justify-center hover:bg-success-200 transition"
+                                title="Kirim Ulang Email">
+                                <iconify-icon icon="solar:letter-bold" class="text-sm"></iconify-icon>
+                            </button>
+                            @endif
+                            <button type="button"
+                                onclick="confirmDelete({{ $bidan->id }}, '{{ addslashes($bidan->user->name) }}')"
+                                class="w-8 h-8 bg-danger-100 dark:bg-danger-600/25 text-danger-600 rounded-full flex items-center justify-center hover:bg-danger-200 transition"
+                                title="Hapus">
+                                <iconify-icon icon="solar:trash-bin-trash-outline" class="text-sm"></iconify-icon>
+                            </button>
                         </div>
                     </td>
                     @endif
@@ -212,3 +223,97 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    function biperSwal(opts) {
+        return Swal.fire(Object.assign({
+            heightAuto: false,
+            buttonsStyling: false,
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-2xl',
+                confirmButton: 'biper-swal-btn biper-swal-confirm-primary',
+                cancelButton: 'biper-swal-btn biper-swal-cancel'
+            }
+        }, opts));
+    }
+
+    function confirmDelete(bidanId, bidanName) {
+        biperSwal({
+            title: 'Hapus Bidan?',
+            html: `Data bidan <strong>${bidanName}</strong> akan dihapus secara permanen.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            customClass: {
+                popup: 'rounded-2xl',
+                confirmButton: 'biper-swal-btn biper-swal-confirm-danger',
+                cancelButton: 'biper-swal-btn biper-swal-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/bidans/${bidanId}`,
+                    type: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function(res) {
+                        biperSwal({
+                            title: 'Berhasil!',
+                            text: res.message,
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true
+                        }).then(() => location.reload());
+                    },
+                    error: function(xhr) {
+                        biperSwal({
+                            title: 'Gagal!',
+                            text: xhr.responseJSON?.message || 'Terjadi kesalahan.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmResendInvitation(bidanId, bidanName) {
+        biperSwal({
+            title: 'Kirim Ulang Email?',
+            html: `Kirim ulang email undangan ke <strong>${bidanName}</strong> untuk membuat password.<br><small class="text-gray-400">Link sebelumnya akan diganti dengan yang baru (berlaku 24 jam).</small>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Kirim Ulang',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/bidans/${bidanId}/resend-invitation`,
+                    type: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function(res) {
+                        biperSwal({
+                            title: 'Berhasil!',
+                            text: res.message,
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
+                    },
+                    error: function(xhr) {
+                        biperSwal({
+                            title: 'Gagal!',
+                            text: xhr.responseJSON?.message || 'Terjadi kesalahan.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
+@endpush

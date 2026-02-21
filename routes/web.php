@@ -109,6 +109,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
         Route::post('/bidans', [BidanController::class, 'store'])->name('bidans.store');
         Route::get('/bidans/{bidan}/edit', [BidanController::class, 'edit'])->name('bidans.edit');
         Route::put('/bidans/{bidan}', [BidanController::class, 'update'])->name('bidans.update');
+        Route::post('/bidans/{bidan}/resend-invitation', [BidanController::class, 'resendInvitation'])->name('bidans.resendInvitation');
         Route::delete('/bidans/{bidan}', [BidanController::class, 'destroy'])->name('bidans.destroy');
     });
 

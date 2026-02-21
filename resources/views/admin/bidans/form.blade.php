@@ -41,15 +41,6 @@ $isEdit = isset($bidan);
             </div>
             <div class="biper-wizard-step" data-step="2">
                 <div class="biper-wizard-step__icon">
-                    <iconify-icon icon="solar:notebook-bold-duotone"></iconify-icon>
-                </div>
-                <span class="biper-wizard-step__label">Detail</span>
-            </div>
-            <div class="biper-wizard-step__connector">
-                <div class="biper-wizard-step__connector-fill"></div>
-            </div>
-            <div class="biper-wizard-step" data-step="3">
-                <div class="biper-wizard-step__icon">
                     <iconify-icon icon="solar:map-point-bold-duotone"></iconify-icon>
                 </div>
                 <span class="biper-wizard-step__label">Lokasi</span>
@@ -57,7 +48,7 @@ $isEdit = isset($bidan);
             <div class="biper-wizard-step__connector">
                 <div class="biper-wizard-step__connector-fill"></div>
             </div>
-            <div class="biper-wizard-step" data-step="4">
+            <div class="biper-wizard-step" data-step="3">
                 <div class="biper-wizard-step__icon">
                     <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
                 </div>
@@ -131,32 +122,22 @@ $isEdit = isset($bidan);
                             <iconify-icon icon="solar:shield-user-bold" class="text-sm text-primary-600"></iconify-icon>
                             Data Akun Login
                         </p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="form-label text-sm text-neutral-600 dark:text-neutral-300 mb-1">Email <span class="text-danger-600">*</span></label>
-                                <div class="icon-field">
-                                    <span class="icon"><iconify-icon icon="solar:letter-linear"></iconify-icon></span>
-                                    <input type="email" name="email" id="newEmail"
-                                        value="{{ old('email') }}"
-                                        class="form-control @error('email') border-danger-500 @enderror"
-                                        placeholder="Email untuk login">
-                                </div>
-                                @error('email')
-                                <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
+                        <div>
+                            <label class="form-label text-sm text-neutral-600 dark:text-neutral-300 mb-1">Email <span class="text-danger-600">*</span></label>
+                            <div class="icon-field">
+                                <span class="icon"><iconify-icon icon="solar:letter-linear"></iconify-icon></span>
+                                <input type="email" name="email" id="newEmail"
+                                    value="{{ old('email') }}"
+                                    class="form-control @error('email') border-danger-500 @enderror"
+                                    placeholder="Email untuk login">
                             </div>
-                            <div>
-                                <label class="form-label text-sm text-neutral-600 dark:text-neutral-300 mb-1">Password <span class="text-danger-600">*</span></label>
-                                <div class="icon-field">
-                                    <span class="icon"><iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon></span>
-                                    <input type="password" name="password" id="newPassword"
-                                        class="form-control @error('password') border-danger-500 @enderror"
-                                        placeholder="Minimal 8 karakter">
-                                </div>
-                                @error('password')
-                                <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            @error('email')
+                            <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-primary-50 dark:bg-primary-600/10 border border-primary-200 dark:border-primary-600/30 rounded-xl mt-3">
+                            <iconify-icon icon="solar:letter-bold-duotone" class="text-xl text-primary-600 shrink-0"></iconify-icon>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400">Email undangan akan dikirim untuk membuat password sendiri.</p>
                         </div>
                     </div>
                 </div>
@@ -178,20 +159,69 @@ $isEdit = isset($bidan);
                         @enderror
                     </div>
                     <div>
-                        <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">
-                            Status
-                        </label>
-                        <div class="flex items-center gap-3 h-[44px]">
-                            <input type="hidden" name="is_active" value="0">
-                            <label class="relative inline-flex items-center cursor-pointer">
-                                <input type="checkbox" name="is_active" value="1" class="sr-only peer"
-                                    {{ old('is_active', $isEdit ? $bidan->is_active : true) ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary-300 rounded-full peer dark:bg-neutral-600 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
-                            </label>
-                            <span class="text-sm font-medium text-neutral-600 dark:text-neutral-300">Aktif</span>
+                        <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">No HP</label>
+                        <div class="icon-field">
+                            <span class="icon"><iconify-icon icon="solar:phone-calling-linear"></iconify-icon></span>
+                            <input type="text" name="phone" value="{{ old('phone', $isEdit ? $bidan->user->phone : '') }}"
+                                class="form-control @error('phone') border-danger-500 @enderror"
+                                placeholder="cth: 081234567890">
                         </div>
+                        @error('phone')
+                        <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
+
+                {{-- Password Section --}}
+                @if ($isEdit)
+                <div class="mt-6 pt-6 border-t border-neutral-100 dark:border-neutral-600">
+                    @if ($bidan->user->email_verified_at)
+                    <h6 class="font-bold text-sm mb-4 flex items-center gap-2 text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
+                        <iconify-icon icon="solar:lock-keyhole-bold-duotone" class="text-lg text-primary-600 normal-case"></iconify-icon>
+                        Ubah Password
+                    </h6>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label text-sm text-neutral-600 dark:text-neutral-300 mb-1">
+                                Password <span class="text-neutral-400 font-normal">(opsional)</span>
+                            </label>
+                            <div class="icon-field">
+                                <span class="icon"><iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon></span>
+                                <input type="password" name="password"
+                                    class="form-control @error('password') border-danger-500 @enderror"
+                                    placeholder="Masukkan password baru">
+                            </div>
+                            @error('password')
+                            <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="form-label text-sm text-neutral-600 dark:text-neutral-300 mb-1">
+                                Konfirmasi Password
+                            </label>
+                            <div class="icon-field">
+                                <span class="icon"><iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon></span>
+                                <input type="password" name="password_confirmation"
+                                    class="form-control"
+                                    placeholder="Ulangi password baru">
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-2 flex items-start gap-2">
+                        <iconify-icon icon="solar:info-circle-outline" class="text-sm mt-0.5 shrink-0"></iconify-icon>
+                        Kosongkan password jika tidak ingin mengubahnya.
+                    </p>
+                    @else
+                    <div class="flex items-center gap-3 p-4 bg-warning-50 dark:bg-warning-600/10 border border-warning-200 dark:border-warning-600/30 rounded-xl">
+                        <iconify-icon icon="solar:letter-unread-bold-duotone" class="text-2xl text-warning-600 shrink-0"></iconify-icon>
+                        <div>
+                            <p class="text-sm font-semibold text-neutral-700 dark:text-neutral-200">Belum Verifikasi Email</p>
+                            <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">User belum membuat password melalui email undangan. Kirim ulang email dari halaman daftar bidan.</p>
+                        </div>
+                    </div>
+                    @endif
+                </div>
+                @endif
             </div>
 
             {{-- Step 1 Navigation --}}
@@ -300,6 +330,15 @@ $isEdit = isset($bidan);
                         @enderror
                     </div>
                 </div>
+                <div>
+                    <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">Biografi</label>
+                    <textarea name="bio" rows="4"
+                        class="form-control @error('bio') border-danger-500 @enderror"
+                        placeholder="Tuliskan deskripsi singkat mengenai pengalaman, keahlian, dan layanan yang ditawarkan...">{{ old('bio', $isEdit ? $bidan->bio : '') }}</textarea>
+                    @error('bio')
+                    <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
 
             {{-- Step 2 Navigation --}}
@@ -315,58 +354,8 @@ $isEdit = isset($bidan);
             </div>
         </div>
 
-        {{-- ========== Step 3: Detail & Bio ========== --}}
+        {{-- ========== Step 3: Alamat & Lokasi ========== --}}
         <div class="biper-wizard-panel" data-panel="2">
-            <div class="px-6 py-8 sm:px-8">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <div>
-                        <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">No HP</label>
-                        <div class="icon-field">
-                            <span class="icon"><iconify-icon icon="solar:phone-calling-linear"></iconify-icon></span>
-                            <input type="text" name="phone" value="{{ old('phone', $isEdit ? $bidan->user->phone : '') }}"
-                                class="form-control @error('phone') border-danger-500 @enderror"
-                                placeholder="cth: 081234567890">
-                        </div>
-                        @error('phone')
-                        <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                    <div>
-                        <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">Email Akun</label>
-                        <div class="icon-field">
-                            <span class="icon"><iconify-icon icon="solar:letter-linear"></iconify-icon></span>
-                            <input type="text" id="linkedEmail" value="{{ $isEdit && $bidan->user ? $bidan->user->email : '' }}"
-                                class="form-control bg-neutral-50 dark:bg-neutral-600" placeholder="Belum ada akun" readonly disabled>
-                        </div>
-                        <p class="text-xs text-neutral-400 mt-1">Diatur otomatis dari Step 1.</p>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">Biografi</label>
-                        <textarea name="bio" rows="4"
-                            class="form-control @error('bio') border-danger-500 @enderror"
-                            placeholder="Tuliskan deskripsi singkat mengenai pengalaman, keahlian, dan layanan yang ditawarkan...">{{ old('bio', $isEdit ? $bidan->bio : '') }}</textarea>
-                        @error('bio')
-                        <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-                </div>
-            </div>
-
-            {{-- Step 3 Navigation --}}
-            <div class="biper-wizard-nav">
-                <button type="button" class="btn btn-outline-neutral biper-wizard-btn-prev">
-                    <iconify-icon icon="solar:arrow-left-linear" class="text-lg"></iconify-icon>
-                    Kembali
-                </button>
-                <button type="button" class="btn btn-primary-600 biper-wizard-btn-next">
-                    Selanjutnya
-                    <iconify-icon icon="solar:arrow-right-linear" class="text-lg"></iconify-icon>
-                </button>
-            </div>
-        </div>
-
-        {{-- ========== Step 4: Alamat & Lokasi ========== --}}
-        <div class="biper-wizard-panel" data-panel="3">
             <div class="px-6 py-8 sm:px-8">
                 <div class="space-y-5">
                     <div>
@@ -422,7 +411,7 @@ $isEdit = isset($bidan);
                 </div>
             </div>
 
-            {{-- Step 4 Navigation --}}
+            {{-- Step 3 Navigation --}}
             <div class="biper-wizard-nav">
                 <button type="button" class="btn btn-outline-neutral biper-wizard-btn-prev">
                     <iconify-icon icon="solar:arrow-left-linear" class="text-lg"></iconify-icon>
@@ -435,8 +424,8 @@ $isEdit = isset($bidan);
             </div>
         </div>
 
-        {{-- ========== Step 5: Jadwal Praktik ========== --}}
-        <div class="biper-wizard-panel" data-panel="4">
+        {{-- ========== Step 4: Jadwal Praktik ========== --}}
+        <div class="biper-wizard-panel" data-panel="3">
             <div class="px-6 py-8 sm:px-8">
                 @php
                 $days = [
@@ -521,7 +510,7 @@ $isEdit = isset($bidan);
                 </p>
             </div>
 
-            {{-- Step 5 Navigation --}}
+            {{-- Step 4 Navigation --}}
             <div class="biper-wizard-nav">
                 <button type="button" class="btn btn-outline-neutral biper-wizard-btn-prev">
                     <iconify-icon icon="solar:arrow-left-linear" class="text-lg"></iconify-icon>
@@ -552,7 +541,7 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
 
         // ==================== Wizard Navigation ====================
         var currentStep = 0;
-        var totalSteps = 5;
+        var totalSteps = 4;
         var $steps = $('.biper-wizard-step');
         var $connectors = $('.biper-wizard-step__connector-fill');
         var $panels = $('.biper-wizard-panel');
@@ -585,7 +574,7 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
             });
 
             // Invalidate map on location step
-            if (step === 3 && typeof map !== 'undefined') {
+            if (step === 2 && typeof map !== 'undefined') {
                 setTimeout(function() {
                     map.invalidateSize();
                 }, 300);
@@ -623,7 +612,6 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
         var $userSelect = $('#userSelect');
         var $nameField = $('input[name="name"]');
         var $linkedInfo = $('#linkedUserInfo');
-        var $linkedEmail = $('#linkedEmail');
         var $newAccountFields = $('#newAccountFields');
         var $newEmail = $('#newEmail');
 
@@ -635,7 +623,6 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
                 // Create new account mode
                 $newAccountFields.slideDown(200);
                 $linkedInfo.hide();
-                $linkedEmail.val($newEmail.val() || '');
                 if ($nameField.data('auto-filled')) {
                     $nameField.val('').data('auto-filled', false);
                 }
@@ -646,9 +633,6 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
                 if ($nameField.val() === '' || $nameField.data('auto-filled')) {
                     $nameField.val(userName).data('auto-filled', true);
                 }
-                var optionText = $selected.text();
-                var emailMatch = optionText.match(/\((.+)\)/);
-                $linkedEmail.val(emailMatch ? emailMatch[1] : '');
                 $linkedInfo.show();
             }
         }
@@ -656,9 +640,6 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
         $userSelect.on('change', updateLinkedState);
         $nameField.on('input', function() {
             $(this).data('auto-filled', false);
-        });
-        $newEmail.on('input', function() {
-            $linkedEmail.val($(this).val());
         });
         updateLinkedState();
 
