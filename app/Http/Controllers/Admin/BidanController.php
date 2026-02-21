@@ -96,12 +96,18 @@ class BidanController extends Controller
                 ]);
             }
 
-            // Remove name & phone from bidan data (stored on user)
-            unset($validated['name'], $validated['phone']);
-
+            // Save photo/address/lat/lng to user
+            $userData = [];
             if ($request->hasFile('photo')) {
-                $validated['photo'] = $request->file('photo')->store('bidans', 'public');
+                $userData['photo'] = $request->file('photo')->store('users', 'public');
             }
+            $userData['address'] = $validated['address'] ?? null;
+            $userData['latitude'] = $validated['latitude'] ?? null;
+            $userData['longitude'] = $validated['longitude'] ?? null;
+            $user->update($userData);
+
+            // Remove user-level fields from bidan data
+            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude']);
 
             if (isset($validated['schedule'])) {
                 $validated['schedule'] = array_filter($validated['schedule'], function ($day) {
@@ -188,17 +194,21 @@ class BidanController extends Controller
                 ]);
             }
 
-            // Remove name & phone from bidan data (stored on user)
-            unset($validated['name'], $validated['phone']);
-
+            // Save photo/address/lat/lng to user
+            $userData = [];
             if ($request->hasFile('photo')) {
-                if ($bidan->photo) {
-                    Storage::disk('public')->delete($bidan->photo);
+                if ($user->photo) {
+                    Storage::disk('public')->delete($user->photo);
                 }
-                $validated['photo'] = $request->file('photo')->store('bidans', 'public');
-            } else {
-                unset($validated['photo']);
+                $userData['photo'] = $request->file('photo')->store('users', 'public');
             }
+            $userData['address'] = $validated['address'] ?? null;
+            $userData['latitude'] = $validated['latitude'] ?? null;
+            $userData['longitude'] = $validated['longitude'] ?? null;
+            $user->update($userData);
+
+            // Remove user-level fields from bidan data
+            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude']);
 
             if (isset($validated['schedule'])) {
                 $validated['schedule'] = array_filter($validated['schedule'], function ($day) {
@@ -218,10 +228,6 @@ class BidanController extends Controller
 
     public function destroy(Bidan $bidan)
     {
-        if ($bidan->photo) {
-            Storage::disk('public')->delete($bidan->photo);
-        }
-
         $bidan->delete();
 
         return redirect()

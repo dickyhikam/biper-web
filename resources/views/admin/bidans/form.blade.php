@@ -81,7 +81,7 @@ $isEdit = isset($bidan);
                 <div class="flex flex-col items-center mb-8">
                     <div class="biper-photo-upload">
                         <div class="biper-photo-upload__preview" id="imagePreview"
-                            style="background-image: url('{{ ($isEdit && $bidan->photo_url) ? $bidan->photo_url : asset('assets/images/user.png') }}');">
+                            style="background-image: url('{{ ($isEdit && $bidan->user->photo_url) ? $bidan->user->photo_url : asset('assets/images/user.png') }}');">
                         </div>
                         <label for="photo" class="biper-photo-upload__overlay">
                             <iconify-icon icon="solar:camera-bold" class="text-2xl"></iconify-icon>
@@ -373,7 +373,7 @@ $isEdit = isset($bidan);
                         <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">Alamat Lengkap</label>
                         <textarea name="address" rows="2"
                             class="form-control @error('address') border-danger-500 @enderror"
-                            placeholder="Masukkan alamat lengkap untuk layanan homecare">{{ old('address', $isEdit ? $bidan->address : '') }}</textarea>
+                            placeholder="Masukkan alamat lengkap untuk layanan homecare">{{ old('address', $isEdit ? $bidan->user->address : '') }}</textarea>
                         @error('address')
                         <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -382,23 +382,33 @@ $isEdit = isset($bidan);
                         <div class="biper-map-container">
                             <div class="biper-map-hint">
                                 <iconify-icon icon="solar:map-arrow-right-bold" class="text-primary-600 text-lg"></iconify-icon>
-                                <span>Klik pada peta untuk menentukan titik lokasi</span>
+                                <span>Klik pada peta atau cari lokasi untuk menentukan titik</span>
                             </div>
-                            <div id="map" style="height: 350px;"></div>
+                            <div style="position:relative;">
+                                {{-- Search overlay di dalam peta --}}
+                                <div class="biper-map-search">
+                                    <div class="biper-map-search__input">
+                                        <iconify-icon icon="solar:magnifer-linear" class="text-neutral-400 text-lg"></iconify-icon>
+                                        <input type="text" id="mapSearch" placeholder="Cari lokasi..." autocomplete="off">
+                                    </div>
+                                    <div id="mapSearchResults" class="biper-map-search__results" style="display:none;"></div>
+                                </div>
+                                <div id="map" style="height: 350px;"></div>
+                            </div>
                         </div>
                         <div class="flex flex-wrap gap-3 mt-3">
                             <div class="biper-coord-badge">
                                 <iconify-icon icon="solar:routing-2-outline" class="text-primary-600"></iconify-icon>
                                 <span class="text-neutral-500 text-xs">Lat:</span>
                                 <input type="text" name="latitude" id="latitude"
-                                    value="{{ old('latitude', $isEdit ? $bidan->latitude : '') }}"
+                                    value="{{ old('latitude', $isEdit ? $bidan->user->latitude : '') }}"
                                     class="biper-coord-input" placeholder="&mdash;" readonly>
                             </div>
                             <div class="biper-coord-badge">
                                 <iconify-icon icon="solar:routing-2-outline" class="text-primary-600"></iconify-icon>
                                 <span class="text-neutral-500 text-xs">Lng:</span>
                                 <input type="text" name="longitude" id="longitude"
-                                    value="{{ old('longitude', $isEdit ? $bidan->longitude : '') }}"
+                                    value="{{ old('longitude', $isEdit ? $bidan->user->longitude : '') }}"
                                     class="biper-coord-input" placeholder="&mdash;" readonly>
                             </div>
                         </div>
@@ -530,8 +540,8 @@ $isEdit = isset($bidan);
 @endsection
 
 @php
-$mapLat = old('latitude', ($isEdit && $bidan->latitude) ? $bidan->latitude : null);
-$mapLng = old('longitude', ($isEdit && $bidan->longitude) ? $bidan->longitude : null);
+$mapLat = old('latitude', ($isEdit && $bidan->user->latitude) ? $bidan->user->latitude : null);
+$mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->longitude : null);
 @endphp
 
 @push('scripts')
@@ -779,16 +789,16 @@ $mapLng = old('longitude', ($isEdit && $bidan->longitude) ? $bidan->longitude : 
             }
         });
 
-        // ==================== Leaflet Map ====================
-        var defaultLat = -6.200000;
-        var defaultLng = 106.816666;
+        // ==================== Leaflet Map — default Sidoarjo ====================
+        var defaultLat = -7.447800;
+        var defaultLng = 112.718300;
         var mapData = document.getElementById('mapData');
         var initialLat = mapData.dataset.lat ? parseFloat(mapData.dataset.lat) : null;
         var initialLng = mapData.dataset.lng ? parseFloat(mapData.dataset.lng) : null;
 
         var map = L.map('map').setView(
             [initialLat || defaultLat, initialLng || defaultLng],
-            initialLat ? 15 : 5
+            initialLat ? 16 : 13
         );
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -801,14 +811,96 @@ $mapLng = old('longitude', ($isEdit && $bidan->longitude) ? $bidan->longitude : 
             marker = L.marker([initialLat, initialLng]).addTo(map);
         }
 
-        map.on('click', function(e) {
-            document.getElementById('latitude').value = e.latlng.lat.toFixed(8);
-            document.getElementById('longitude').value = e.latlng.lng.toFixed(8);
-
+        // Helper: set marker + coordinates
+        function setLocation(lat, lng, zoomLevel) {
+            document.getElementById('latitude').value = lat.toFixed(8);
+            document.getElementById('longitude').value = lng.toFixed(8);
             if (marker) {
-                marker.setLatLng(e.latlng);
+                marker.setLatLng([lat, lng]);
             } else {
-                marker = L.marker(e.latlng).addTo(map);
+                marker = L.marker([lat, lng]).addTo(map);
+            }
+            if (zoomLevel) map.setView([lat, lng], zoomLevel);
+        }
+
+        // Reverse geocoding: klik peta → isi alamat
+        map.on('click', function(e) {
+            setLocation(e.latlng.lat, e.latlng.lng);
+
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e.latlng.lat + '&lon=' + e.latlng.lng + '&zoom=18&addressdetails=1', {
+                headers: { 'Accept-Language': 'id' }
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.display_name) {
+                    $('textarea[name="address"]').val(data.display_name);
+                }
+            })
+            .catch(function() {});
+        });
+
+        // Forward geocoding: cari alamat → tampilkan di peta
+        var searchTimeout;
+        var $search = $('#mapSearch');
+        var $results = $('#mapSearchResults');
+
+        $search.on('input', function() {
+            var query = $(this).val().trim();
+            clearTimeout(searchTimeout);
+
+            if (query.length < 3) {
+                $results.hide().empty();
+                return;
+            }
+
+            searchTimeout = setTimeout(function() {
+                fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&countrycodes=id&limit=5&addressdetails=1', {
+                    headers: { 'Accept-Language': 'id' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(items) {
+                    $results.empty();
+                    if (items.length === 0) {
+                        $results.append('<div class="biper-search-empty">Tidak ditemukan</div>');
+                    } else {
+                        items.forEach(function(item) {
+                            $results.append(
+                                '<div class="biper-search-item" data-lat="' + item.lat + '" data-lng="' + item.lon + '">' +
+                                '<div class="font-medium">' + item.display_name + '</div>' +
+                                '</div>'
+                            );
+                        });
+                    }
+                    $results.show();
+                })
+                .catch(function() {});
+            }, 400);
+        });
+
+        // Klik hasil search
+        $(document).on('click', '.biper-search-item', function() {
+            var lat = parseFloat($(this).data('lat'));
+            var lng = parseFloat($(this).data('lng'));
+            var name = $(this).find('div').text();
+
+            setLocation(lat, lng, 16);
+            $('textarea[name="address"]').val(name);
+
+            $results.hide().empty();
+            $search.val('');
+        });
+
+        // Tutup dropdown saat klik di luar
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('#mapSearch, #mapSearchResults').length) {
+                $results.hide();
+            }
+        });
+
+        // Prevent enter key from submitting form on search
+        $search.on('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
             }
         });
 

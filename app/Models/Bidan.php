@@ -27,11 +27,7 @@ class Bidan extends Model
         'str_number',
         'experience_years',
         'employment_type',
-        'photo',
         'bio',
-        'address',
-        'latitude',
-        'longitude',
         'schedule',
         'is_active',
     ];
@@ -41,8 +37,6 @@ class Bidan extends Model
         return [
             'schedule' => 'array',
             'is_active' => 'boolean',
-            'latitude' => 'decimal:8',
-            'longitude' => 'decimal:8',
             'experience_years' => 'integer',
         ];
     }
@@ -63,6 +57,6 @@ class Bidan extends Model
 
     public function getPhotoUrlAttribute(): ?string
     {
-        return $this->photo ? asset('storage/' . $this->photo) : null;
+        return $this->user?->photo_url;
     }
 }

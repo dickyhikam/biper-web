@@ -35,11 +35,16 @@ class User extends Authenticatable
         'phone',
         'password',
         'role',
+        'photo',
+        'address',
+        'latitude',
+        'longitude',
         'email_verified_at',
         'email_verification_code',
         'email_verification_code_expires_at',
         'email_verification_code_sent_at',
         'email_verification_attempts',
+        'is_active',
     ];
 
     protected $hidden = [
@@ -54,6 +59,9 @@ class User extends Authenticatable
             'email_verification_code_expires_at' => 'datetime',
             'email_verification_code_sent_at' => 'datetime',
             'password' => 'hashed',
+            'latitude' => 'decimal:8',
+            'longitude' => 'decimal:8',
+            'is_active' => 'boolean',
         ];
     }
 
@@ -204,5 +212,10 @@ class User extends Authenticatable
     public function getRoleLabelAttribute(): string
     {
         return self::ROLES[$this->role] ?? $this->role;
+    }
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
     }
 }

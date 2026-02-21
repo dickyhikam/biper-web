@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -21,7 +22,8 @@ class UserController extends Controller
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -39,7 +41,7 @@ class UserController extends Controller
     {
         $roles = $this->adminRoles();
 
-        return view('admin.users.create', compact('roles'));
+        return view('admin.users.form', compact('roles'));
     }
 
     public function store(Request $request)
@@ -47,9 +49,18 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::min(8)],
             'role' => ['required', 'string', Rule::in(array_keys($this->adminRoles()))],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $validated['photo'] = $request->file('photo')->store('users', 'public');
+        }
 
         User::create($validated);
 
@@ -62,7 +73,7 @@ class UserController extends Controller
     {
         $roles = $this->adminRoles();
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.form', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
@@ -70,12 +81,26 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20'],
             'password' => ['nullable', 'confirmed', Password::min(8)],
             'role' => ['required', 'string', Rule::in(array_keys($this->adminRoles()))],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
+            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
         if (empty($validated['password'])) {
             unset($validated['password']);
+        }
+
+        if ($request->hasFile('photo')) {
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
+            $validated['photo'] = $request->file('photo')->store('users', 'public');
+        } else {
+            unset($validated['photo']);
         }
 
         $user->update($validated);
@@ -85,18 +110,35 @@ class UserController extends Controller
             ->with('success', 'User berhasil diperbarui.');
     }
 
+    public function toggleStatus(User $user)
+    {
+        if ($user->id === auth('admin')->id()) {
+            return response()->json(['message' => 'Anda tidak bisa menonaktifkan akun sendiri.'], 403);
+        }
+
+        $user->update(['is_active' => !$user->is_active]);
+
+        $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
+
+        return response()->json(['message' => "User berhasil {$status}.", 'is_active' => $user->is_active]);
+    }
+
     public function destroy(User $user)
     {
         if ($user->id === auth('admin')->id()) {
-            return redirect()
-                ->route('admin.users.index')
-                ->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+            return response()->json(['message' => 'Anda tidak bisa menghapus akun sendiri.'], 403);
+        }
+
+        if (!$user->created_at->isToday()) {
+            return response()->json(['message' => 'User hanya bisa dihapus pada hari yang sama saat dibuat.'], 403);
+        }
+
+        if ($user->photo) {
+            Storage::disk('public')->delete($user->photo);
         }
 
         $user->delete();
 
-        return redirect()
-            ->route('admin.users.index')
-            ->with('success', 'User berhasil dihapus.');
+        return response()->json(['message' => 'User berhasil dihapus.']);
     }
 }

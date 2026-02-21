@@ -86,8 +86,8 @@
                     <td class="px-5 py-3 text-gray-500 dark:text-neutral-400">{{ $bidans->firstItem() + $index }}</td>
                     <td class="px-5 py-3">
                         <div class="flex items-center">
-                            @if ($bidan->photo_url)
-                            <img src="{{ $bidan->photo_url }}" alt="{{ $bidan->user->name }}"
+                            @if ($bidan->user->photo_url)
+                            <img src="{{ $bidan->user->photo_url }}" alt="{{ $bidan->user->name }}"
                                 class="w-10 h-10 rounded-full object-cover shrink-0 me-2.5">
                             @else
                             @php $nameParts = explode(' ', $bidan->user->name); $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : ''); @endphp

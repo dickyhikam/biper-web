@@ -5,7 +5,7 @@
 @section('breadcrumb', 'Detail Bidan / Terapis')
 
 @push('styles')
-    @if ($bidan->latitude && $bidan->longitude)
+    @if ($bidan->user->latitude && $bidan->user->longitude)
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     @endif
 @endpush
@@ -33,8 +33,8 @@
             </div>
 
             <div class="flex items-start gap-5">
-                @if ($bidan->photo_url)
-                    <img src="{{ $bidan->photo_url }}" alt="{{ $bidan->user->name }}" class="biper-detail-hero__avatar">
+                @if ($bidan->user->photo_url)
+                    <img src="{{ $bidan->user->photo_url }}" alt="{{ $bidan->user->name }}" class="biper-detail-hero__avatar">
                 @else
                     @php $nameParts = explode(' ', $bidan->user->name); $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : ''); @endphp
                     <div class="biper-detail-hero__initials">
@@ -167,19 +167,19 @@
         </div>
 
         {{-- ====== Alamat & Peta ====== --}}
-        @if ($bidan->address || ($bidan->latitude && $bidan->longitude))
+        @if ($bidan->user->address || ($bidan->user->latitude && $bidan->user->longitude))
             <div class="biper-detail-section">
                 <div class="biper-detail-section__title">
                     <iconify-icon icon="solar:map-point-bold-duotone" class="text-base text-primary-600"></iconify-icon>
                     Alamat & Lokasi
                 </div>
-                @if ($bidan->address)
+                @if ($bidan->user->address)
                     <p class="text-sm text-neutral-600 dark:text-neutral-400 mb-3 flex items-start gap-2">
                         <iconify-icon icon="solar:map-arrow-right-bold" class="text-primary-600 text-base mt-0.5 flex-shrink-0"></iconify-icon>
-                        {{ $bidan->address }}
+                        {{ $bidan->user->address }}
                     </p>
                 @endif
-                @if ($bidan->latitude && $bidan->longitude)
+                @if ($bidan->user->latitude && $bidan->user->longitude)
                     <div class="biper-detail-map">
                         <div id="map"></div>
                     </div>
@@ -187,12 +187,12 @@
                         <div class="biper-coord-badge">
                             <iconify-icon icon="solar:routing-2-outline" class="text-primary-600"></iconify-icon>
                             <span class="text-neutral-500 text-xs">Lat:</span>
-                            <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">{{ $bidan->latitude }}</span>
+                            <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">{{ $bidan->user->latitude }}</span>
                         </div>
                         <div class="biper-coord-badge">
                             <iconify-icon icon="solar:routing-2-outline" class="text-primary-600"></iconify-icon>
                             <span class="text-neutral-500 text-xs">Lng:</span>
-                            <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">{{ $bidan->longitude }}</span>
+                            <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300">{{ $bidan->user->longitude }}</span>
                         </div>
                     </div>
                 @endif
@@ -204,8 +204,8 @@
 @endsection
 
 @php
-    $showLat = ($bidan->latitude && $bidan->longitude) ? $bidan->latitude : null;
-    $showLng = ($bidan->latitude && $bidan->longitude) ? $bidan->longitude : null;
+    $showLat = ($bidan->user->latitude && $bidan->user->longitude) ? $bidan->user->latitude : null;
+    $showLng = ($bidan->user->latitude && $bidan->user->longitude) ? $bidan->user->longitude : null;
 @endphp
 
 @push('scripts')

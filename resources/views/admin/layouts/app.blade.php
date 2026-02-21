@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/lib/flatpickr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/biper-admin.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     @stack('styles')
 </head>
 
@@ -40,6 +41,7 @@
     <script src="{{ asset('assets/js/lib/jquery-ui.min.js') }}"></script>
     <script src="{{ asset('assets/js/flowbite.min.js') }}"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
 
 </body>
