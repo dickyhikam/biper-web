@@ -44,46 +44,45 @@ $isEdit = isset($user);
                 {{-- User Info --}}
                 <div class="text-center sm:text-left min-w-0">
                     @if ($isEdit)
-                        <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-200 mb-1">{{ $user->name }}</h2>
-                        <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3 flex items-center gap-1.5 justify-center sm:justify-start">
-                            <iconify-icon icon="solar:letter-bold-duotone" class="text-base text-primary-600"></iconify-icon>
-                            {{ $user->email }}
-                        </p>
-                        <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
-                            @php
-                                $badgeColors = [
-                                    'super_admin' => 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400',
-                                    'owner' => 'bg-purple-100 dark:bg-purple-600/25 text-purple-600 dark:text-purple-400',
-                                    'admin' => 'bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400',
-                                    'bidan_terapis' => 'bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400',
-                                ];
-                            @endphp
-                            <span class="{{ $badgeColors[$user->role] ?? '' }} px-3 py-1 rounded-full text-xs font-semibold">
-                                {{ $user->role_label }}
-                            </span>
-                            @if ($user->hasVerifiedEmail())
-                            <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-semibold">
-                                <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
-                                Terverifikasi
-                            </span>
-                            @else
-                            <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-semibold">
-                                <iconify-icon icon="solar:clock-circle-bold" class="text-sm"></iconify-icon>
-                                Belum Verifikasi
-                            </span>
-                            @endif
-                        </div>
-                        <p class="text-xs text-neutral-400 mt-2">
-                            <iconify-icon icon="solar:calendar-bold-duotone" class="text-sm align-middle"></iconify-icon>
-                            Terdaftar {{ $user->created_at->format('d M Y') }}
-                        </p>
+                    <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-200 mb-1">{{ $user->name }}</h2>
+                    <p class="text-sm text-neutral-500 dark:text-neutral-400 mb-3 flex items-center gap-1.5 justify-center sm:justify-start">
+                        <iconify-icon icon="solar:letter-bold-duotone" class="text-base text-primary-600"></iconify-icon>
+                        {{ $user->email }}
+                    </p>
+                    <div class="flex flex-wrap gap-2 justify-center sm:justify-start">
+                        @php
+                        $badgeColors = [
+                        'super_admin' => 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400',
+                        'owner' => 'bg-purple-100 dark:bg-purple-600/25 text-purple-600 dark:text-purple-400',
+                        'admin' => 'bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400',
+                        ];
+                        @endphp
+                        <span class="{{ $badgeColors[$user->role] ?? '' }} px-3 py-1 rounded-full text-xs font-semibold">
+                            {{ $user->role_label }}
+                        </span>
+                        @if ($user->hasVerifiedEmail())
+                        <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-semibold">
+                            <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
+                            Terverifikasi
+                        </span>
+                        @else
+                        <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-semibold">
+                            <iconify-icon icon="solar:clock-circle-bold" class="text-sm"></iconify-icon>
+                            Belum Verifikasi
+                        </span>
+                        @endif
+                    </div>
+                    <p class="text-xs text-neutral-400 mt-2">
+                        <iconify-icon icon="solar:calendar-bold-duotone" class="text-sm align-middle"></iconify-icon>
+                        Terdaftar {{ $user->created_at->format('d M Y') }}
+                    </p>
                     @else
-                        <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-200 mb-1">User Baru</h2>
-                        <p class="text-sm text-neutral-400 dark:text-neutral-500 mb-3">Lengkapi data berikut untuk membuat user baru.</p>
-                        <div class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 px-3 py-1.5 rounded-lg text-xs">
-                            <iconify-icon icon="solar:info-circle-bold-duotone" class="text-base"></iconify-icon>
-                            Email undangan akan dikirim untuk membuat password.
-                        </div>
+                    <h2 class="text-xl font-bold text-neutral-800 dark:text-neutral-200 mb-1">User Baru</h2>
+                    <p class="text-sm text-neutral-400 dark:text-neutral-500 mb-3">Lengkapi data berikut untuk membuat user baru.</p>
+                    <div class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 px-3 py-1.5 rounded-lg text-xs">
+                        <iconify-icon icon="solar:info-circle-bold-duotone" class="text-base"></iconify-icon>
+                        Email undangan akan dikirim untuk membuat password.
+                    </div>
                     @endif
                 </div>
             </div>
@@ -366,15 +365,19 @@ $mapLng = old('longitude', ($isEdit && $user->longitude) ? $user->longitude : nu
             setLocation(e.latlng.lat, e.latlng.lng);
 
             fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + e.latlng.lat + '&lon=' + e.latlng.lng + '&zoom=18&addressdetails=1', {
-                headers: { 'Accept-Language': 'id' }
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-                if (data.display_name) {
-                    document.getElementById('address').value = data.display_name;
-                }
-            })
-            .catch(function() {});
+                    headers: {
+                        'Accept-Language': 'id'
+                    }
+                })
+                .then(function(r) {
+                    return r.json();
+                })
+                .then(function(data) {
+                    if (data.display_name) {
+                        document.getElementById('address').value = data.display_name;
+                    }
+                })
+                .catch(function() {});
         });
 
         // Forward geocoding: cari alamat → tampilkan di peta
@@ -393,25 +396,29 @@ $mapLng = old('longitude', ($isEdit && $user->longitude) ? $user->longitude : nu
 
             searchTimeout = setTimeout(function() {
                 fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&countrycodes=id&limit=5&addressdetails=1', {
-                    headers: { 'Accept-Language': 'id' }
-                })
-                .then(function(r) { return r.json(); })
-                .then(function(items) {
-                    $results.empty();
-                    if (items.length === 0) {
-                        $results.append('<div class="biper-search-empty">Tidak ditemukan</div>');
-                    } else {
-                        items.forEach(function(item) {
-                            $results.append(
-                                '<div class="biper-search-item" data-lat="' + item.lat + '" data-lng="' + item.lon + '">' +
-                                '<div class="font-medium">' + item.display_name + '</div>' +
-                                '</div>'
-                            );
-                        });
-                    }
-                    $results.show();
-                })
-                .catch(function() {});
+                        headers: {
+                            'Accept-Language': 'id'
+                        }
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(items) {
+                        $results.empty();
+                        if (items.length === 0) {
+                            $results.append('<div class="biper-search-empty">Tidak ditemukan</div>');
+                        } else {
+                            items.forEach(function(item) {
+                                $results.append(
+                                    '<div class="biper-search-item" data-lat="' + item.lat + '" data-lng="' + item.lon + '">' +
+                                    '<div class="font-medium">' + item.display_name + '</div>' +
+                                    '</div>'
+                                );
+                            });
+                        }
+                        $results.show();
+                    })
+                    .catch(function() {});
             }, 400);
         });
 

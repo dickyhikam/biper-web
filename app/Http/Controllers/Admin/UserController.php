@@ -21,13 +21,14 @@ class UserController extends Controller
         $search = $request->input('search');
 
         $query = User::where('role', '!=', User::ROLE_PELANGGAN)
+            ->where('role', '!=', User::ROLE_BIDAN_TERAPIS)
             ->orderBy('created_at', 'desc');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%");
             });
         }
 
@@ -38,7 +39,7 @@ class UserController extends Controller
 
     private function adminRoles(): array
     {
-        return collect(User::ROLES)->except(User::ROLE_PELANGGAN)->all();
+        return collect(User::ROLES)->except(User::ROLE_PELANGGAN)->except(User::ROLE_BIDAN_TERAPIS)->all();
     }
 
     public function create()

@@ -77,7 +77,6 @@
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">No HP</th>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Role</th>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Status</th>
-                    <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Dibuat</th>
                     @if (auth('admin')->user()->canManageUsers())
                     <th class="px-5 py-3 text-center text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider w-24">Aksi</th>
                     @endif
@@ -106,12 +105,12 @@
                     </td>
                     <td class="px-5 py-3">
                         @php
-                            $badgeColors = [
-                                'super_admin' => 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400',
-                                'owner' => 'bg-purple-100 dark:bg-purple-600/25 text-purple-600 dark:text-purple-400',
-                                'admin' => 'bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400',
-                                'bidan_terapis' => 'bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400',
-                            ];
+                        $badgeColors = [
+                        'super_admin' => 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400',
+                        'owner' => 'bg-purple-100 dark:bg-purple-600/25 text-purple-600 dark:text-purple-400',
+                        'admin' => 'bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400',
+                        'bidan_terapis' => 'bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400',
+                        ];
                         @endphp
                         <span class="{{ $badgeColors[$user->role] ?? '' }} px-3 py-1 rounded-full text-xs font-medium">
                             {{ $user->role_label }}
@@ -119,23 +118,22 @@
                     </td>
                     <td class="px-5 py-3" id="status-user-{{ $user->id }}">
                         @if (!$user->email_verified_at)
-                            <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-medium">
-                                <iconify-icon icon="solar:letter-unread-bold" class="text-sm"></iconify-icon>
-                                Belum Verifikasi
-                            </span>
+                        <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:letter-unread-bold" class="text-sm"></iconify-icon>
+                            Belum Verifikasi
+                        </span>
                         @elseif ($user->is_active)
-                            <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-medium">
-                                <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
-                                Aktif
-                            </span>
+                        <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
+                            Aktif
+                        </span>
                         @else
-                            <span class="inline-flex items-center gap-1 bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 px-3 py-1 rounded-full text-xs font-medium">
-                                <iconify-icon icon="solar:close-circle-bold" class="text-sm"></iconify-icon>
-                                Nonaktif
-                            </span>
+                        <span class="inline-flex items-center gap-1 bg-danger-100 dark:bg-danger-600/25 text-danger-600 dark:text-danger-400 px-3 py-1 rounded-full text-xs font-medium">
+                            <iconify-icon icon="solar:close-circle-bold" class="text-sm"></iconify-icon>
+                            Nonaktif
+                        </span>
                         @endif
                     </td>
-                    <td class="px-5 py-3 text-gray-600 dark:text-neutral-300 whitespace-nowrap">{{ $user->created_at->format('d M Y') }}</td>
                     @if (auth('admin')->user()->canManageUsers())
                     <td class="px-5 py-3 text-center">
                         <div class="flex items-center justify-center gap-2">
@@ -145,29 +143,30 @@
                                 <iconify-icon icon="solar:pen-outline" class="text-sm"></iconify-icon>
                             </a>
                             @if ($user->id !== auth('admin')->id())
-                                @if (!$user->email_verified_at)
-                                <button type="button"
-                                    onclick="confirmResendInvitation({{ $user->id }}, '{{ addslashes($user->name) }}')"
-                                    class="w-8 h-8 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex items-center justify-center hover:bg-primary-200 transition"
-                                    title="Kirim Ulang Email">
-                                    <iconify-icon icon="solar:letter-bold" class="text-sm"></iconify-icon>
-                                </button>
-                                @elseif ($user->created_at->isToday())
-                                <button type="button"
-                                    onclick="confirmDelete({{ $user->id }}, '{{ addslashes($user->name) }}')"
-                                    class="w-8 h-8 bg-danger-100 dark:bg-danger-600/25 text-danger-600 rounded-full flex items-center justify-center hover:bg-danger-200 transition"
-                                    title="Hapus">
-                                    <iconify-icon icon="solar:trash-bin-trash-outline" class="text-sm"></iconify-icon>
-                                </button>
-                                @else
-                                <button type="button"
-                                    onclick="confirmToggleStatus({{ $user->id }}, '{{ addslashes($user->name) }}', {{ $user->is_active ? 'true' : 'false' }})"
-                                    class="w-8 h-8 {{ $user->is_active ? 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 hover:bg-danger-200' : 'bg-success-100 dark:bg-success-600/25 text-success-600 hover:bg-success-200' }} rounded-full flex items-center justify-center transition"
-                                    title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}"
-                                    id="toggle-btn-{{ $user->id }}">
-                                    <iconify-icon icon="{{ $user->is_active ? 'solar:user-cross-rounded-outline' : 'solar:user-check-rounded-outline' }}" class="text-sm"></iconify-icon>
-                                </button>
-                                @endif
+                            @if (!$user->email_verified_at)
+                            <button type="button"
+                                onclick="confirmResendInvitation({{ $user->id }}, '{{ addslashes($user->name) }}')"
+                                class="w-8 h-8 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex items-center justify-center hover:bg-primary-200 transition"
+                                title="Kirim Ulang Email">
+                                <iconify-icon icon="solar:letter-bold" class="text-sm"></iconify-icon>
+                            </button>
+                            @endif
+                            @if ($user->created_at->isToday())
+                            <button type="button"
+                                onclick="confirmDelete({{ $user->id }}, '{{ addslashes($user->name) }}')"
+                                class="w-8 h-8 bg-danger-100 dark:bg-danger-600/25 text-danger-600 rounded-full flex items-center justify-center hover:bg-danger-200 transition"
+                                title="Hapus">
+                                <iconify-icon icon="solar:trash-bin-trash-outline" class="text-sm"></iconify-icon>
+                            </button>
+                            @elseif ($user->email_verified_at)
+                            <button type="button"
+                                onclick="confirmToggleStatus({{ $user->id }}, '{{ addslashes($user->name) }}', {{ $user->is_active ? 'true' : 'false' }})"
+                                class="w-8 h-8 {{ $user->is_active ? 'bg-danger-100 dark:bg-danger-600/25 text-danger-600 hover:bg-danger-200' : 'bg-success-100 dark:bg-success-600/25 text-success-600 hover:bg-success-200' }} rounded-full flex items-center justify-center transition"
+                                title="{{ $user->is_active ? 'Nonaktifkan' : 'Aktifkan' }}"
+                                id="toggle-btn-{{ $user->id }}">
+                                <iconify-icon icon="{{ $user->is_active ? 'solar:user-cross-rounded-outline' : 'solar:user-check-rounded-outline' }}" class="text-sm"></iconify-icon>
+                            </button>
+                            @endif
                             @endif
                         </div>
                     </td>
@@ -278,7 +277,9 @@
                 $.ajax({
                     url: `/admin/users/${userId}`,
                     type: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     success: function(res) {
                         biperSwal({
                             title: 'Berhasil!',
@@ -313,7 +314,9 @@
                 $.ajax({
                     url: `/admin/users/${userId}/resend-invitation`,
                     type: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     success: function(res) {
                         biperSwal({
                             title: 'Berhasil!',
@@ -347,9 +350,9 @@
             cancelButtonText: 'Batal',
             customClass: {
                 popup: 'rounded-2xl',
-                confirmButton: isActive
-                    ? 'biper-swal-btn biper-swal-confirm-danger'
-                    : 'biper-swal-btn biper-swal-confirm-success',
+                confirmButton: isActive ?
+                    'biper-swal-btn biper-swal-confirm-danger' :
+                    'biper-swal-btn biper-swal-confirm-success',
                 cancelButton: 'biper-swal-btn biper-swal-cancel'
             }
         }).then((result) => {
@@ -357,7 +360,9 @@
                 $.ajax({
                     url: `/admin/users/${userId}/toggle-status`,
                     type: 'PATCH',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     success: function(res) {
                         biperSwal({
                             title: 'Berhasil!',

@@ -71,6 +71,7 @@
             <thead class="bg-gray-50 dark:bg-neutral-800 border-b border-gray-100 dark:border-neutral-600 sticky top-0 z-10">
                 <tr>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider w-12">No</th>
+                    <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Foto</th>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Nama</th>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">Spesialisasi</th>
                     <th class="px-5 py-3 text-left text-xs uppercase text-gray-500 dark:text-neutral-400 font-bold tracking-wider">No HP</th>
@@ -85,16 +86,17 @@
                 <tr class="group hover:bg-gray-50/80 dark:hover:bg-neutral-600/50 transition-colors">
                     <td class="px-5 py-3 text-gray-500 dark:text-neutral-400">{{ $bidans->firstItem() + $index }}</td>
                     <td class="px-5 py-3">
+                        @if ($bidan->user->photo_url)
+                        <img src="{{ $bidan->user->photo_url }}" alt="{{ $bidan->user->name }}" class="w-10 h-10 rounded-full object-cover shrink-0">
+                        @else
+                        @php $nameParts = explode(' ', $bidan->user->name); $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : ''); @endphp
+                        <div class="w-10 h-10 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex justify-center items-center shrink-0 font-semibold text-xs">
+                            {{ $initials }}
+                        </div>
+                        @endif
+                    </td>
+                    <td class="px-5 py-3">
                         <div class="flex items-center">
-                            @if ($bidan->user->photo_url)
-                            <img src="{{ $bidan->user->photo_url }}" alt="{{ $bidan->user->name }}"
-                                class="w-10 h-10 rounded-full object-cover shrink-0 me-2.5">
-                            @else
-                            @php $nameParts = explode(' ', $bidan->user->name); $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : ''); @endphp
-                            <div class="w-10 h-10 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex justify-center items-center shrink-0 me-2.5 font-semibold text-xs">
-                                {{ $initials }}
-                            </div>
-                            @endif
                             <div>
                                 <span class="font-medium text-gray-800 dark:text-neutral-200">{{ $bidan->full_name }}</span>
                                 @if ($bidan->str_number)
@@ -259,7 +261,9 @@
                 $.ajax({
                     url: `/admin/bidans/${bidanId}`,
                     type: 'DELETE',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     success: function(res) {
                         biperSwal({
                             title: 'Berhasil!',
@@ -294,7 +298,9 @@
                 $.ajax({
                     url: `/admin/bidans/${bidanId}/resend-invitation`,
                     type: 'POST',
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken
+                    },
                     success: function(res) {
                         biperSwal({
                             title: 'Berhasil!',
