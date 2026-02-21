@@ -172,6 +172,33 @@ $isEdit = isset($bidan);
                     </div>
                 </div>
 
+                {{-- Email field for existing linked user --}}
+                <div id="existingUserEmail" class="mt-5" style="display: none;">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">
+                                Email <span class="text-danger-600">*</span>
+                            </label>
+                            <div class="icon-field">
+                                <span class="icon"><iconify-icon icon="solar:letter-linear"></iconify-icon></span>
+                                <input type="email" name="existing_email" id="existingEmailInput"
+                                    value="{{ old('existing_email', $isEdit ? $bidan->user->email : '') }}"
+                                    class="form-control @error('existing_email') border-danger-500 @enderror"
+                                    placeholder="Email untuk login">
+                            </div>
+                            @error('existing_email')
+                            <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+                    @if ($isEdit && !$bidan->user->email_verified_at)
+                    <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-2 flex items-start gap-2">
+                        <iconify-icon icon="solar:info-circle-outline" class="text-sm mt-0.5 shrink-0"></iconify-icon>
+                        Jika email diubah, email undangan baru akan dikirim ke alamat email yang baru.
+                    </p>
+                    @endif
+                </div>
+
                 {{-- Password Section --}}
                 @if ($isEdit)
                 <div class="mt-6 pt-6 border-t border-neutral-100 dark:border-neutral-600">
@@ -614,6 +641,7 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
         var $linkedInfo = $('#linkedUserInfo');
         var $newAccountFields = $('#newAccountFields');
         var $newEmail = $('#newEmail');
+        var $existingUserEmail = $('#existingUserEmail');
 
         function updateLinkedState() {
             var val = $userSelect.val();
@@ -622,6 +650,7 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
             if (val === 'new') {
                 // Create new account mode
                 $newAccountFields.slideDown(200);
+                $existingUserEmail.slideUp(200);
                 $linkedInfo.hide();
                 if ($nameField.data('auto-filled')) {
                     $nameField.val('').data('auto-filled', false);
@@ -629,6 +658,7 @@ $mapLng = old('longitude', ($isEdit && $bidan->user->longitude) ? $bidan->user->
             } else if (val) {
                 // Link existing user mode
                 $newAccountFields.slideUp(200);
+                $existingUserEmail.slideDown(200);
                 var userName = $selected.data('name');
                 if ($nameField.val() === '' || $nameField.data('auto-filled')) {
                     $nameField.val(userName).data('auto-filled', true);

@@ -107,6 +107,9 @@ class UserController extends Controller
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
+        $emailChanged = $user->email !== $validated['email'];
+        $wasUnverified = !$user->email_verified_at;
+
         if (empty($validated['password'])) {
             unset($validated['password']);
         }
@@ -120,7 +123,31 @@ class UserController extends Controller
             unset($validated['photo']);
         }
 
+        // If email changed on unverified user, reset verification
+        if ($emailChanged && $wasUnverified) {
+            $validated['email_verified_at'] = null;
+        }
+
         $user->update($validated);
+
+        // Send new welcome email if email changed on unverified user
+        if ($emailChanged && $wasUnverified) {
+            PasswordBroker::broker()->deleteToken($user);
+            $token = PasswordBroker::broker()->createToken($user);
+            $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $user->email]);
+
+            try {
+                Mail::to($user)->send(new WelcomeUserMail($user, $setPasswordUrl));
+
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with('success', 'User berhasil diperbarui. Email undangan telah dikirim ke ' . $user->email);
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.users.index')
+                    ->with('success', 'User berhasil diperbarui, namun email undangan gagal dikirim.');
+            }
+        }
 
         return redirect()
             ->route('admin.users.index')

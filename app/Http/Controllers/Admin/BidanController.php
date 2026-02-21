@@ -189,13 +189,16 @@ class BidanController extends Controller
         } else {
             $rules['user_id'] = ['required', 'exists:users,id', "unique:bidans,user_id,{$bidan->id}"];
             $rules['password'] = ['nullable', 'confirmed', 'min:8'];
+            $existingUser = User::findOrFail($request->input('user_id'));
+            $rules['existing_email'] = ['required', 'email', 'max:255', \Illuminate\Validation\Rule::unique('users', 'email')->ignore($existingUser->id)];
         }
 
         $validated = $request->validate($rules);
 
         $newUser = null;
+        $emailChangedOnUnverified = false;
 
-        DB::transaction(function () use ($request, $validated, $isNewAccount, $bidan, &$newUser) {
+        DB::transaction(function () use ($request, $validated, $isNewAccount, $bidan, &$newUser, &$emailChangedOnUnverified) {
             if ($isNewAccount) {
                 $user = User::create([
                     'name' => $validated['name'],
@@ -216,6 +219,16 @@ class BidanController extends Controller
                 if (!empty($validated['password'])) {
                     $userData['password'] = $validated['password'];
                 }
+
+                // Handle email change
+                if (isset($validated['existing_email']) && $user->email !== $validated['existing_email']) {
+                    $userData['email'] = $validated['existing_email'];
+                    if (!$user->email_verified_at) {
+                        $userData['email_verified_at'] = null;
+                        $emailChangedOnUnverified = true;
+                    }
+                }
+
                 $user->update($userData);
             }
 
@@ -233,7 +246,7 @@ class BidanController extends Controller
             $user->update($userData);
 
             // Remove user-level fields from bidan data
-            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude'], $validated['password']);
+            unset($validated['name'], $validated['phone'], $validated['photo'], $validated['address'], $validated['latitude'], $validated['longitude'], $validated['password'], $validated['existing_email']);
 
             if (isset($validated['schedule'])) {
                 $validated['schedule'] = array_filter($validated['schedule'], function ($day) {
@@ -246,6 +259,7 @@ class BidanController extends Controller
             $bidan->update($validated);
         });
 
+        // Send welcome email for new account
         if ($newUser) {
             $token = Password::broker()->createToken($newUser);
             $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $newUser->email]);
@@ -256,6 +270,26 @@ class BidanController extends Controller
                 return redirect()
                     ->route('admin.bidans.index')
                     ->with('success', 'Data bidan/terapis berhasil diperbarui, namun email gagal dikirim.');
+            }
+        }
+
+        // Send new welcome email if email changed on unverified user
+        if ($emailChangedOnUnverified) {
+            $user = $bidan->user->fresh();
+            Password::broker()->deleteToken($user);
+            $token = Password::broker()->createToken($user);
+            $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $user->email]);
+
+            try {
+                Mail::to($user)->send(new WelcomeUserMail($user, $setPasswordUrl));
+
+                return redirect()
+                    ->route('admin.bidans.index')
+                    ->with('success', 'Data bidan/terapis berhasil diperbarui. Email undangan telah dikirim ke ' . $user->email);
+            } catch (\Exception $e) {
+                return redirect()
+                    ->route('admin.bidans.index')
+                    ->with('success', 'Data bidan/terapis berhasil diperbarui, namun email undangan gagal dikirim.');
             }
         }
 
