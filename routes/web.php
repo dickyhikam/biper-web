@@ -94,6 +94,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
     Route::get('/pelanggan', [PelangganController::class, 'index'])
         ->name('pelanggan.index')
         ->middleware('role:super_admin,admin,owner');
+    Route::get('/pelanggan/{pelanggan}', [PelangganController::class, 'show'])
+        ->name('pelanggan.show')
+        ->middleware('role:super_admin,admin,owner');
 
     // Bidan/Terapis management - create, edit, delete (harus sebelum show route)
     Route::middleware('role:super_admin,owner')->group(function () {

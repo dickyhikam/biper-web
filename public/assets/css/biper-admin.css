@@ -1485,3 +1485,27 @@
         grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
     }
 }
+
+/* ========================
+   Fixed Layout — Sidebar & navbar fixed, content area scrolls
+   ======================== */
+.dashboard-main {
+    height: 100vh;
+    min-height: unset;
+    overflow: hidden;
+}
+
+.navbar-header {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.dashboard-main-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.d-footer {
+    flex-shrink: 0;
+}

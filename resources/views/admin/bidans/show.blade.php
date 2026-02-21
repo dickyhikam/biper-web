@@ -36,8 +36,9 @@
                 @if ($bidan->photo_url)
                     <img src="{{ $bidan->photo_url }}" alt="{{ $bidan->user->name }}" class="biper-detail-hero__avatar">
                 @else
+                    @php $nameParts = explode(' ', $bidan->user->name); $initials = strtoupper(substr($nameParts[0], 0, 1)) . (isset($nameParts[1]) ? strtoupper(substr($nameParts[1], 0, 1)) : ''); @endphp
                     <div class="biper-detail-hero__initials">
-                        {{ strtoupper(substr($bidan->user->name, 0, 2)) }}
+                        {{ $initials }}
                     </div>
                 @endif
                 <div class="min-w-0">

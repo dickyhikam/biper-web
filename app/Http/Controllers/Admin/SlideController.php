@@ -9,9 +9,21 @@ use Illuminate\Support\Facades\Storage;
 
 class SlideController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $slides = Slide::ordered()->get();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+
+        $query = Slide::ordered();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('subtitle', 'like', "%{$search}%");
+            });
+        }
+
+        $slides = $query->paginate($perPage)->withQueryString();
 
         return view('admin.slides.index', compact('slides'));
     }

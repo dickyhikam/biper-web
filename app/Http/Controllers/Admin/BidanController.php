@@ -12,9 +12,25 @@ use Illuminate\Support\Facades\Storage;
 
 class BidanController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $bidans = Bidan::orderBy('created_at', 'desc')->get();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search');
+
+        $query = Bidan::orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('specialization', 'like', "%{$search}%")
+                  ->orWhere('str_number', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($q2) use ($search) {
+                      $q2->where('name', 'like', "%{$search}%")
+                        ->orWhere('phone', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        $bidans = $query->paginate($perPage)->withQueryString();
 
         return view('admin.bidans.index', compact('bidans'));
     }

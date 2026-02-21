@@ -24,7 +24,7 @@
     <main class="dashboard-main">
         @include('admin.partials.navbar')
 
-        <div class="dashboard-main-body">
+        <div class="dashboard-main-body @yield('body-class')">
             @include('admin.partials.breadcrumb')
 
             @yield('content')
