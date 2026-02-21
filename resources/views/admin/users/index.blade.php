@@ -118,7 +118,12 @@
                         </span>
                     </td>
                     <td class="px-5 py-3" id="status-user-{{ $user->id }}">
-                        @if ($user->is_active)
+                        @if (!$user->email_verified_at)
+                            <span class="inline-flex items-center gap-1 bg-warning-100 dark:bg-warning-600/25 text-warning-600 dark:text-warning-400 px-3 py-1 rounded-full text-xs font-medium">
+                                <iconify-icon icon="solar:letter-unread-bold" class="text-sm"></iconify-icon>
+                                Belum Verifikasi
+                            </span>
+                        @elseif ($user->is_active)
                             <span class="inline-flex items-center gap-1 bg-success-100 dark:bg-success-600/25 text-success-600 dark:text-success-400 px-3 py-1 rounded-full text-xs font-medium">
                                 <iconify-icon icon="solar:check-circle-bold" class="text-sm"></iconify-icon>
                                 Aktif
@@ -140,7 +145,14 @@
                                 <iconify-icon icon="solar:pen-outline" class="text-sm"></iconify-icon>
                             </a>
                             @if ($user->id !== auth('admin')->id())
-                                @if ($user->created_at->isToday())
+                                @if (!$user->email_verified_at)
+                                <button type="button"
+                                    onclick="confirmResendInvitation({{ $user->id }}, '{{ addslashes($user->name) }}')"
+                                    class="w-8 h-8 bg-primary-100 dark:bg-primary-600/25 text-primary-600 rounded-full flex items-center justify-center hover:bg-primary-200 transition"
+                                    title="Kirim Ulang Email">
+                                    <iconify-icon icon="solar:letter-bold" class="text-sm"></iconify-icon>
+                                </button>
+                                @elseif ($user->created_at->isToday())
                                 <button type="button"
                                     onclick="confirmDelete({{ $user->id }}, '{{ addslashes($user->name) }}')"
                                     class="w-8 h-8 bg-danger-100 dark:bg-danger-600/25 text-danger-600 rounded-full flex items-center justify-center hover:bg-danger-200 transition"
@@ -275,6 +287,41 @@
                             timer: 2000,
                             timerProgressBar: true
                         }).then(() => location.reload());
+                    },
+                    error: function(xhr) {
+                        biperSwal({
+                            title: 'Gagal!',
+                            text: xhr.responseJSON?.message || 'Terjadi kesalahan.',
+                            icon: 'error'
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+    function confirmResendInvitation(userId, userName) {
+        biperSwal({
+            title: 'Kirim Ulang Email?',
+            html: `Kirim ulang email undangan ke <strong>${userName}</strong> untuk membuat password.<br><small class="text-gray-400">Link sebelumnya akan diganti dengan yang baru (berlaku 24 jam).</small>`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, Kirim Ulang',
+            cancelButtonText: 'Batal',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/admin/users/${userId}/resend-invitation`,
+                    type: 'POST',
+                    headers: { 'X-CSRF-TOKEN': csrfToken },
+                    success: function(res) {
+                        biperSwal({
+                            title: 'Berhasil!',
+                            text: res.message,
+                            icon: 'success',
+                            timer: 2000,
+                            timerProgressBar: true
+                        });
                     },
                     error: function(xhr) {
                         biperSwal({

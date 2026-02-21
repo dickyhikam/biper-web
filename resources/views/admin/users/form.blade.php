@@ -82,7 +82,7 @@ $isEdit = isset($user);
                         <p class="text-sm text-neutral-400 dark:text-neutral-500 mb-3">Lengkapi data berikut untuk membuat user baru.</p>
                         <div class="inline-flex items-center gap-2 bg-primary-100 dark:bg-primary-600/25 text-primary-600 dark:text-primary-400 px-3 py-1.5 rounded-lg text-xs">
                             <iconify-icon icon="solar:info-circle-bold-duotone" class="text-base"></iconify-icon>
-                            User akan langsung aktif tanpa perlu verifikasi email.
+                            Email undangan akan dikirim untuk membuat password.
                         </div>
                     @endif
                 </div>
@@ -169,29 +169,24 @@ $isEdit = isset($user);
             </div>
 
             {{-- Section: Password --}}
+            @if ($isEdit)
             <div class="mb-8">
                 <h6 class="font-bold text-sm mb-5 flex items-center gap-2 text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">
                     <iconify-icon icon="solar:lock-keyhole-bold-duotone" class="text-lg text-primary-600 normal-case"></iconify-icon>
-                    {{ $isEdit ? 'Ubah Password' : 'Password' }}
+                    Ubah Password
                     <span class="flex-1 h-px bg-neutral-100 dark:bg-neutral-600"></span>
                 </h6>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label for="password" class="form-label font-semibold text-neutral-600 dark:text-neutral-300 mb-2">
-                            Password
-                            @if ($isEdit)
-                            <span class="text-neutral-400 font-normal">(opsional)</span>
-                            @else
-                            <span class="text-danger-600">*</span>
-                            @endif
+                            Password <span class="text-neutral-400 font-normal">(opsional)</span>
                         </label>
                         <div class="icon-field">
                             <span class="icon"><iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon></span>
                             <input type="password" name="password" id="password"
                                 class="form-control @error('password') border-danger-500 @enderror"
-                                placeholder="{{ $isEdit ? 'Masukkan password baru' : 'Minimal 8 karakter' }}"
-                                {{ $isEdit ? '' : 'required' }}>
+                                placeholder="Masukkan password baru">
                         </div>
                         @error('password')
                         <p class="text-danger-600 text-xs mt-1">{{ $message }}</p>
@@ -205,18 +200,27 @@ $isEdit = isset($user);
                             <span class="icon"><iconify-icon icon="solar:lock-keyhole-linear"></iconify-icon></span>
                             <input type="password" name="password_confirmation" id="password_confirmation"
                                 class="form-control"
-                                placeholder="{{ $isEdit ? 'Ulangi password baru' : 'Ulangi password' }}">
+                                placeholder="Ulangi password baru">
                         </div>
                     </div>
                 </div>
 
-                @if ($isEdit)
                 <p class="text-xs text-neutral-400 dark:text-neutral-500 mt-3 flex items-start gap-2">
                     <iconify-icon icon="solar:info-circle-outline" class="text-sm mt-0.5 shrink-0"></iconify-icon>
                     Kosongkan password jika tidak ingin mengubahnya.
                 </p>
-                @endif
             </div>
+            @else
+            <div class="mb-8">
+                <div class="flex items-center gap-3 p-4 bg-primary-50 dark:bg-primary-600/10 border border-primary-200 dark:border-primary-600/30 rounded-xl">
+                    <iconify-icon icon="solar:letter-bold-duotone" class="text-2xl text-primary-600 shrink-0"></iconify-icon>
+                    <div>
+                        <p class="text-sm font-semibold text-neutral-700 dark:text-neutral-200">Password via Email</p>
+                        <p class="text-xs text-neutral-500 dark:text-neutral-400 mt-0.5">User akan menerima email undangan untuk membuat password sendiri.</p>
+                    </div>
+                </div>
+            </div>
+            @endif
 
             {{-- Section: Alamat & Lokasi --}}
             <div class="mb-8">

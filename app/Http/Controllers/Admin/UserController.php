@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\WelcomeUserMail;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password as PasswordBroker;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -50,7 +54,6 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'phone' => ['nullable', 'string', 'max:20'],
-            'password' => ['required', 'confirmed', Password::min(8)],
             'role' => ['required', 'string', Rule::in(array_keys($this->adminRoles()))],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'address' => ['nullable', 'string', 'max:500'],
@@ -58,15 +61,28 @@ class UserController extends Controller
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
         ]);
 
+        $validated['password'] = Str::random(32);
+
         if ($request->hasFile('photo')) {
             $validated['photo'] = $request->file('photo')->store('users', 'public');
         }
 
-        User::create($validated);
+        $user = User::create($validated);
+
+        $token = PasswordBroker::broker()->createToken($user);
+        $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $user->email]);
+
+        try {
+            Mail::to($user)->send(new WelcomeUserMail($user, $setPasswordUrl));
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with('success', 'User berhasil ditambahkan, namun email gagal dikirim.');
+        }
 
         return redirect()
             ->route('admin.users.index')
-            ->with('success', 'User berhasil ditambahkan.');
+            ->with('success', 'User berhasil ditambahkan. Email undangan telah dikirim ke ' . $user->email);
     }
 
     public function edit(User $user)
@@ -121,6 +137,25 @@ class UserController extends Controller
         $status = $user->is_active ? 'diaktifkan' : 'dinonaktifkan';
 
         return response()->json(['message' => "User berhasil {$status}.", 'is_active' => $user->is_active]);
+    }
+
+    public function resendInvitation(User $user)
+    {
+        if ($user->email_verified_at) {
+            return response()->json(['message' => 'User sudah verifikasi email.'], 422);
+        }
+
+        PasswordBroker::broker()->deleteToken($user);
+        $token = PasswordBroker::broker()->createToken($user);
+        $setPasswordUrl = route('admin.set-password', ['token' => $token, 'email' => $user->email]);
+
+        try {
+            Mail::to($user)->send(new WelcomeUserMail($user, $setPasswordUrl));
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Gagal mengirim email. Coba lagi nanti.'], 500);
+        }
+
+        return response()->json(['message' => 'Email undangan berhasil dikirim ulang ke ' . $user->email]);
     }
 
     public function destroy(User $user)

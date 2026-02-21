@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\BidanController;
 use App\Http\Controllers\Admin\PelangganController;
+use App\Http\Controllers\Admin\SetPasswordController;
 use App\Http\Controllers\Admin\SlideController;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +71,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth:admin');
+    Route::get('/set-password/{token}', [SetPasswordController::class, 'showForm'])->name('set-password');
+    Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('set-password.submit');
 });
 
 // Admin panel routes (butuh auth guard admin)
@@ -88,6 +91,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::patch('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggleStatus');
+        Route::post('/users/{user}/resend-invitation', [UserController::class, 'resendInvitation'])->name('users.resendInvitation');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 
