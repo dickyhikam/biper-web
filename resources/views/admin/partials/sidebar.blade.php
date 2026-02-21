@@ -24,16 +24,18 @@
             <li class="sidebar-menu-group-title">Manajemen</li>
 
             <li>
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" class="opacity-50 pointer-events-none">
                     <iconify-icon icon="solar:calendar-outline" class="menu-icon"></iconify-icon>
                     <span>Booking</span>
+                    <span class="bg-neutral-200 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ms-auto">Soon</span>
                 </a>
             </li>
 
             <li>
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" class="opacity-50 pointer-events-none">
                     <iconify-icon icon="solar:hand-stars-outline" class="menu-icon"></iconify-icon>
                     <span>Layanan</span>
+                    <span class="bg-neutral-200 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ms-auto">Soon</span>
                 </a>
             </li>
 
@@ -75,16 +77,18 @@
             <li class="sidebar-menu-group-title">Keuangan</li>
 
             <li>
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" class="opacity-50 pointer-events-none">
                     <iconify-icon icon="solar:wallet-bold" class="menu-icon"></iconify-icon>
                     <span>Transaksi</span>
+                    <span class="bg-neutral-200 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ms-auto">Soon</span>
                 </a>
             </li>
 
             <li>
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" class="opacity-50 pointer-events-none">
                     <iconify-icon icon="hugeicons:invoice-03" class="menu-icon"></iconify-icon>
                     <span>Laporan</span>
+                    <span class="bg-neutral-200 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ms-auto">Soon</span>
                 </a>
             </li>
 
@@ -102,9 +106,10 @@
             @endauth
 
             <li>
-                <a href="javascript:void(0)">
+                <a href="javascript:void(0)" class="opacity-50 pointer-events-none">
                     <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
                     <span>Pengaturan</span>
+                    <span class="bg-neutral-200 dark:bg-neutral-600 text-neutral-500 dark:text-neutral-400 text-[10px] font-semibold px-1.5 py-0.5 rounded-full ms-auto">Soon</span>
                 </a>
             </li>
 
